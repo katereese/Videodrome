@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h1>Welcome to Videodrome!
+	</h1>
+		<h2>Please create a profile and start rating movies and adding friends!
+			</h2>
+
+<div id="sign_up_form">
+<form method='POST' action="/sign_up_form" id="submit_input">
+
+    <div id="email">
+        <p>Email</p>
+        <input type="text" name="email" placeholder="email">
+    </div>
+
+    <div id="password">
+        <p>Password</p>
+        <input type="text" name="password" placeholder="password">
+    </div>
+
+    <div id="username">
+        <p>Username</p>
+        <input type="text" name="username" placeholder="username">
+    </div>
+
+    <input type="submit" id="submit_input" name="submit">Submit</input> 
+
+</form>
+</div>
+{% endblock %}

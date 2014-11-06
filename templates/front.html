@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Welcome to Videodrome!
+	</h1>
+		<h2>The place to explore movie interests with your friends.
+			</h2>
+
+<div id="Login">
+<form method="post" action="/login" id="login">
+
+        <p>If you're a current user, please login.</p>
+
+        <div id="email">
+            <p>Email</p>
+            <input type="text" name="email">
+        </div>
+
+        <div id="pasword">
+            <p>Password</p>
+            <input type="text" name="password">
+        </div>
+
+        <button type="submit" id="submit_button" name="submit">Submit</button> 
+</form>
+
+<div id="Sign-up">
+
+        <p>Or would you like to <a href="{{ url_for('sign_up') }}">sign up?</a>
+
+</div>
+
+<!-- <form action="/sign_up" id="sign_up">
+        <p>Or would you like to <button>sign up?</button>
+</form> -->
+<!-- </div> -->
+
+// <script>
+// // assigning a variable
+// sign_upButton = document.GetElementById('sign_up');
+// sign_upButton.addEventListener("click", function(event){
+//     alert("you clicked me");
+// }
+// </script>
+
+{% endblock %}
