@@ -90,16 +90,6 @@ class Rating(Base):
 
 ### End class declarations
 
-# function that connects to the ratings database and creates a cursor 
-# (henceforward called "session")s
-# def connect():
-#     global ENGINE
-#     global Session
-#     ENGINE = create_engine("sqlite:///ratings.db", echo=True)
-#     Session = sessionmaker(bind=ENGINE)
-
-#     return session 
-
 # Create all tables in the engine. This is equivalent to "Create Table"
 # statements in raw SQL.
 Base.metadata.create_all(engine)

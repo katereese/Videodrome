@@ -4,9 +4,10 @@ import json
 
 def main():
 
-    ## query API for movie parameters, using OMDb API parameters
+    ## query API for movie items, using OMDb API parameters:
+    ## (https://pypi.python.org/pypi/omdb/0.2.0)
 
-    res = omdb.request(t='Big', r='JSON')
+    res = omdb.request(t='Alive', r='JSON')
     # json_content is a dictionary
     json_content = json.loads(res.content)
 
@@ -14,7 +15,7 @@ def main():
     # year = json_content["Year"]
 
     # iterate over each item in the dictionary, assigning the keys to values in 
-    # the table
+    # the table, and adding the specified fields
     for item in json_content:
     	eachmovie = create_db.Movie(
     					movie_title = json_content['Title'],
@@ -25,9 +26,6 @@ def main():
 
     print eachmovie
 
-	
-
-# call each of the load functions with the session as an argument
 
 if __name__ == "__main__":
 	main()
