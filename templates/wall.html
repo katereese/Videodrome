@@ -1,9 +1,7 @@
-<html>
-    <head>
- </head>
+{% extends 'layout.html' %}
+{% block body %}
 
-    <body>
-
+<title>The Wall</title>
  <form action="/movie_prof" method="GET">
         <h2>Search for a Movie</h2>
         <input type="text" name="movie" placeholder="Movie">
@@ -17,5 +15,4 @@
       <br>
       <a href="/add_review"><button class="" type="submit">Make a New Rating!</a>
 
-    </body>
-</html>
+{% endblock %}

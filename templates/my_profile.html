@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block body %}
+
+ <title>My Profile</title>
+
+<div>
+<h1>User Details
+</h1>
+    <h2>Age: {{user.age}}<br>
+        Gender: {{user.gender}}<br>
+        Zipcode: {{user.zipcode}}<br>
+        Number of Ratings: {{ratings|length}}<br>
+    </h2>
+</div>
+
+<div>
+ <h1>Here are your reviews, user <b> {{ session["login"] }} </b>
+ </h1>
+    <table class="table" style="width:100%">
+    <tr>
+      <th>MOVIE</th>
+      <th>RATING</th>
+    </tr>
+    <tr>
+      {% for rating in ratings %}  
+      <td><SPAN> {{ rating.movie.name }} </SPAN> </td>
+      <td><SPAN> {{ rating.rating }} </SPAN> </td>  
+    </tr>
+      {% endfor %}
+</div>      
+
+ {% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+{% block body %}
+
+<div>
+<h1>User Details</h1>
+    <h2>Age: {{user.age}}<br>
+        Gender: {{user.gender}}<br>
+        Zipcode: {{user.zipcode}}<br>
+        Number of Ratings: {{ratings|length}}<br>
+    </h2>
+  </div>
+
+<!-- <div>
+  <table class="table">
+
+<tr><th>Movie Title</th><th>Release Date</th><th>Rating</th></tr>    
+
+    {% for r in ratings %}
+
+<tr><td><a href="/view_movie/{{r.movie_id}}">{{r.movie.title}}</a></td><td>{{ r.movie.release_date.strftime('%Y-%m-%d') }}</td><td>{{ r.rating }}</td></tr>
+
+    {% endfor %}
+
+  </table>
+</div> -->
+
+{% endblock %}

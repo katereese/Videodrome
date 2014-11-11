@@ -1,5 +1,22 @@
-<!doctype html>
-<title>Videodrome layout</title>
+<html>
+    <head>
+ </head>
+    <body>
+
+	<title>Videodrome layout</title>
+
+	<div id="menu_box">
+	      <ul>
+	        {% if session.get("login", False) %}
+	            <li class='user-name'>{{ session["login"] }}</li>
+	           	<li><a href="/logout">Log Out</a></li>
+	        {% else %}
+	            <li><a href="/">Log In</a></li>
+	            <li><a href="{{ url_for('sign_up') }}">Sign up</a></li>
+	        {% endif %}
+	      </ul>
+	</div>
+
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     <ul class=flashes>
@@ -10,3 +27,6 @@
   {% endif %}
 {% endwith %}
 {% block body %}{% endblock %}
+
+    </body>
+</html>

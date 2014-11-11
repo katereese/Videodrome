@@ -1,9 +1,7 @@
 from flask import Flask, render_template, redirect, request, flash, session
-from create_db import User, session as dbsession 
-# need to go back and add Movie, Rating
+from model import User, Movie, Rating, session as dbsession 
 import omdb
 import json
-
 
 app = Flask(__name__)
 app.secret_key ='bosco'
@@ -13,7 +11,7 @@ app.secret_key ='bosco'
 def index():
 	return render_template("front.html")
 
-@app.route("/login", methods=['POST'])
+@app.route("/login", methods=["POST"])
 def login():
 
 	# fetch email and password from userinput client-side
@@ -29,8 +27,13 @@ def login():
         print session
         return redirect("/wall")      
     else:
-        flash("User not recognized, please try again or signup.")
+        flash("User not recognized, please try again or signup")
         return redirect("/")
+
+@app.route("/logout", methods=["GET", "POST"])
+def logout():
+    session["login"] = "" 
+    return redirect("/") 
 
 @app.route("/sign_up")
 def sign_up():
@@ -38,17 +41,22 @@ def sign_up():
 
 @app.route("/sign_up_form", methods=["POST"])
 def sign_up_form():
-	# input new user row into database and redirect to wall page
+	## input new user row into database and redirect to wall page
 
-	# fetch email, password, and username from userinput client-side
-    ## add if request.form else redirect back to sign_up?
+	# fetch email, password, etc., from userinput client-side
+    # add if request.form else redirect back to sign_up?
 
     email = request.form.get("email")
     password = request.form.get("password")
     username = request.form.get("username")
+    first_name = request.form.get("first_name")
+    last_name = request.form.get("last_name")
+    gender = int(request.form.get("gender"))
+    age = int(request.form.get("age"))
+    zipcode = request.form.get("zipcode")
     
-    # create an instance of user with email, password and username as attributes
-    user = User(email=email, password=password, username=username)
+    # create an instance of User with email, password, username, etc. as attributes
+    user = User(email=email, password=password, username=username, first_name=first_name, last_name=last_name, gender=gender, age=age, zipcode=zipcode)
 
 	# check for email in db, if not there, add it to db
     if dbsession.query(User).filter_by(email = email).first():
@@ -58,24 +66,64 @@ def sign_up_form():
  		dbsession.add(user)
  		dbsession.commit()
  		return redirect("/wall")
-
 # need to create 'forgot your password' feauture
+
+@app.route("/my_profile")
+def my_profile():
+    #gets the email from the session dictionary of logged-in user
+    user_id = session["login"]
+    #gets the ratings of that user
+    ratings = dbsession.query(Rating).filter_by(user_id = user_id).all()
+    return render_template("my_profile.html", user_id=user_id, ratings=ratings)
+
+@app.route("/user_profile")
+def user_profile(id):
+    user = dbsession.query(User).filter_by(id=id).join(Rating).join(Movie).first()
+    ratings = dbsession.query(Rating).filter_by(user_id = id).all()
+    print len(ratings)
+    return render_template("user.html", user=user, ratings=ratings)
 
 @app.route("/wall")
 def user_wall():
 	return render_template("wall.html")
 
-@app.route("/movie_prof", methods=["GET"])
-def movie_prof():
-    #retrieve user input from main.html and set variable movie to movie title
-    movie = request.args.get("movie")
+# gets the movie prof by calling API
+# @app.route("/movie_prof", methods=["GET", "POST"])
+# def movie_prof():
+#     #retrieve user input from main.html and set variable movie to movie title
+#     movie = request.args.get("movie")
 	
-	# query API for move title
-    # using OMDb API parameters
-    res = omdb.request(t=movie, r='JSON')
-    xml_content = json.loads(res.content)
-    return render_template("movie_prof.html", movie=movie, json=xml_content)
+# 	# query API for move title using OMDb API parameters
+#     res = omdb.request(t=movie, r='JSON')
+#     json_content = json.loads(res.content)
+#     return render_template("movie_prof.html", movie=movie, json=json_content)
 
+@app.route("/movie_prof", methods=["GET"])
+def search():
+    #retrieve user input from main.html and set variable movie to movie title
+    movie = request.form.get("movie")
+    #query database by movie title
+    movie_info = dbsession.query(Movie).filter_by(movie_title = movie).first()
+    #fetch attribute for release date
+    released = movie_info.Released
+    #fetch attribute for imdbRating
+    poster = movie_info.Poster
+    #fetch attribute for ratings
+    ratings = movie_info.ratings
+    print movie_info
+    print session
+    return render_template("movie_prof.html", ratings = ratings, movie = movie, released = released, poster = poster)
+
+@app.route("/movie_list")
+def movie_list():
+    movie_list = dbsession.query(Movie).limit(20).all()
+    return render_template("movie_list.html", movies=movie_list)
+
+
+# @app.route("/genres")
+# def genres():
+#     genre_list = dbsession.query(Movie.Genre).all()
+#     return render_template("genres.html", genre=genre_list)
 
 if __name__ == '__main__':
 	# starts the built-in web server on port 5000

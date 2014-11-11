@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% block body %}
+
+<title>List of movies</title>
+
+	{% for movie in movies %}
+	<h2>Movie {{ movie.movie_title }} was made in {{ movie.Year }} </h2>
+	{% endfor %}
+
+{% endblock %}

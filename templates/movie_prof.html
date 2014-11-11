@@ -1,12 +1,32 @@
-<html>
-<body>
+{% extends 'layout.html' %}
+{% block body %}
 
-<h1>Movie Info
-	</h1>
+<title>Movie Profile</title>
+  <h1>Movie Stats for: {{ movie }}</h1>
+    <ul>
+      <li> Released on: {{ released }} </li>
+      <li> IMDB: {{ poster }} </li>
+    </ul>  
 
-	<p>{{ movie }}</p>
-	<p>{{ Plot }}</p>
-	<p>{{ json }}</p>
 
-</body>
-</html>
+<!-- <div class="">
+  <div class="">Ratings</div>
+  <div class="">
+    <p>Here are the movie ratings for {{ movie }}:</p>
+  </div>
+
+  <table class="table" style="width:100%">
+    <tr>
+      <th>USER ID</th>
+      <th>RATING</th>
+    </tr>
+    <tr>
+      {% for rating in ratings %}  
+      <td><a href="/user_id/{{rating.user_id}}">User {{rating.user_id}}</a> </td>
+      <td> {{ rating.rating }} </td>
+    </tr>
+      {% endfor %}
+  </table>
+</div> -->
+
+{% endblock %}
