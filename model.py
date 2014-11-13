@@ -11,6 +11,8 @@ Session = None
 # Create an instance of an engine that stores data in the local directory's
 # sqlalchemy_example.db file. If Echo=True then Engine will log all statements 
 # which is good for debugging.
+# mysql://root@localhost/movies
+# 
 engine = create_engine("sqlite:///movies2.db", echo=False)
 session = scoped_session(sessionmaker(bind=engine,
                                       autocommit = False,
@@ -30,7 +32,7 @@ class Movie(Base):
 	movie_title = Column(String(64), nullable=False)
 	year = Column(Integer, nullable=True)
 	rated = Column(String(64), nullable=True)
-	released = Column(DateTime, nullable=True)
+	released = Column(DateTime(10), nullable=True)
 	runtime = Column(Integer, nullable=True)
 	genre = Column(String(64), nullable=True)
 	director = Column(String(64), nullable=True)
@@ -87,6 +89,7 @@ class Rating(Base):
 def connect():
     global ENGINE
     global Session
+    # mysql://root@localhost/movies
     ENGINE = create_engine("sqlite:///movies2.db", echo=True)
     Session = sessionmaker(bind=ENGINE)
 
@@ -94,4 +97,4 @@ def connect():
 
 # Create all tables in the engine. This is equivalent to "Create Table"
 # statements in raw SQL.
-Base.metadata.create_all(engine)
+# Base.metadata.create_all(engine)

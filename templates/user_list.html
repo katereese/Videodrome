@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<title>The Wall</title>
+	<form action="/user_profile" method="GET">
+    	<h2>Search for a User</h2>
+        <input type="text" name="user" placeholder="user id">
+        <button class="" type="submit">Search</button>
+	</form>
+
+<style>
+table, th, td {
+    border: 0;
+}
+</style>
+</head>
+<body>
+
+<table style="width:50%">
+  <col align="left">
+  <col align="left">
+  <col align="right">
+  <tr>
+    <th>User</th>
+    <th>Age</th>
+    <th>Ratings</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+    <td>{{ user.id }}</td>
+    <td>{{ user.age }}</td>
+    <td>{{ user.ratings|length }} </td>
+  </tr>
+  {% endfor %}
+  </tr>
+</table>
+ 
+{%endblock%}
+
+

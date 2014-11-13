@@ -1,13 +1,15 @@
-{% extends "layout.html" %}
+{% extends 'base.html' %}
 {% block body %}
+
+
 
 <h1>Welcome to Videodrome!
 	</h1>
-		<h2>Please create a profile and start rating movies and adding friends!
+		<h2>Please create a profile and start rating movies!
 			</h2>
 
-<div id="sign_up_form">
-<form method='POST' action="/sign_up_form" id="submit_input">
+<div id="sign_up">
+<form method='POST' action="/sign_up" id="submit_input">
 
     <div id="email">
         <p>email</p>

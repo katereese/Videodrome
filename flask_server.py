@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, request, flash, session
 from model import User, Movie, Rating, session as dbsession 
-import omdb
-import json
+# import omdb
+# import json
 
 app = Flask(__name__)
 app.secret_key ='bosco'
@@ -32,14 +32,14 @@ def login():
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
-    session["login"] = "" 
+    session["login"] = ""
     return redirect("/") 
 
 @app.route("/sign_up")
 def sign_up():
     return render_template("sign_up.html")
 
-@app.route("/sign_up_form", methods=["POST"])
+@app.route("/sign_up", methods=["POST"])
 def sign_up_form():
 	## input new user row into database and redirect to wall page
 
@@ -65,23 +65,42 @@ def sign_up_form():
     else:
  		dbsession.add(user)
  		dbsession.commit()
- 		return redirect("/wall")
+ 		return redirect("/my_profile")
 # need to create 'forgot your password' feauture
 
 @app.route("/my_profile")
 def my_profile():
-    #gets the email from the session dictionary of logged-in user
+    # fetch user_id from the session dictionary of logged-in user
     user_id = session["login"]
-    #gets the ratings of that user
-    ratings = dbsession.query(Rating).filter_by(user_id = user_id).all()
-    return render_template("my_profile.html", user_id=user_id, ratings=ratings)
+    # query for a User class object filtering by its user_id column and the user_id variable,
+    # stored in the session variable named login
+    user = dbsession.query(User).filter_by(id = user_id).first()
+    rating = dbsession.query(Rating).filter_by(user_id = user_id).all()
+    return render_template("my_profile.html", user=user, rating=rating)
 
-@app.route("/user_profile")
-def user_profile(id):
-    user = dbsession.query(User).filter_by(id=id).join(Rating).join(Movie).first()
-    ratings = dbsession.query(Rating).filter_by(user_id = id).all()
-    print len(ratings)
-    return render_template("user.html", user=user, ratings=ratings)
+@app.route("/user_list")
+def user_list(): 
+    user_list = dbsession.query(User).limit(10).all()
+    return render_template("user_list.html", users=user_list)
+
+@app.route("/user_profile", methods=["GET"])
+def user_search():
+    #retrieve user input from user_list.html and set variable user to input
+    user = request.args.get("user")
+    #query database by user id
+    user_info = dbsession.query(User).filter_by(id = user).first()
+    if not user_info:
+        # user wasn't found
+        flash("This user does not exist. Please try again.")
+        return redirect("/user_list")
+
+    #fetch attribute for columns to pass to html page
+    # username = user_info.username
+    # first_name = user_info.first_name
+    # last_name = user_info.last_name
+    # ratings = user_info.ratings
+    print user_info
+    return render_template("user_profile.html", user=user_info) #user_id=user, username=username, first_name=first_name, last_name=last_name, ratings=ratings)
 
 @app.route("/wall")
 def user_wall():
@@ -100,19 +119,22 @@ def user_wall():
 
 @app.route("/movie_prof", methods=["GET"])
 def search():
-    #retrieve user input from main.html and set variable movie to movie title
-    movie = request.form.get("movie")
+    #retrieve user input from wall.html and set variable movie to movie title
+    movie = request.args.get("movie")
     #query database by movie title
     movie_info = dbsession.query(Movie).filter_by(movie_title = movie).first()
-    #fetch attribute for release date
-    released = movie_info.Released
-    #fetch attribute for imdbRating
-    poster = movie_info.Poster
-    #fetch attribute for ratings
+    if not movie_info:
+        # movie wasn't found
+        flash("This movie does not exist. Please try again.")
+        return redirect("/wall")
+
+    #fetch attribute for columns to pass to html page
+    #movie_title = movie_info.movie_title
+    released = movie_info.released
+    poster = movie_info.poster
     ratings = movie_info.ratings
     print movie_info
-    print session
-    return render_template("movie_prof.html", ratings = ratings, movie = movie, released = released, poster = poster)
+    return render_template("movie_prof.html", movie_title=movie, released=released, poster=poster, ratings=ratings)
 
 @app.route("/movie_list")
 def movie_list():
