@@ -1,31 +1,77 @@
-{% extends 'base.html' %}
+{% extends 'base2.html' %}
 {% block body %}
 
-<title>Movie Profile</title>
-  <h1>Movie Stats for: {{ movie_title }}</h1>
+<title>Movie Profile {{ movie.title }} ({{ movie.year }})</title>
+<div class="container">
+  <h1>{{ movie.title }} ({{ movie.year }})</h1>
+  <h3>Videohaus score {{ avg_rating }}</h3>
     <ul>
-      <li> Released on: {{ released }} </li>
-      <li> IMDB: {{ poster }} </li>
-    </ul>  
+      <li>Released on: {{ movie.year }}</li>
+      <li>Running length: {{ movie.runtime }}</li>
+      <li>{{ movie.color }}</li>
+     <!--  <li> IMDB: {{ poster }} </li> -->
+    </ul>
+    <h4>Plot</h4>
+    <p class="plot">
+      {{ movie.plot }}
+    </p>
+
+      <form action="/add_rating" METHOD="POST" class="rating">
+        <h2>Rate this movie now:</h2>
+        <input type="hidden" name="id" value="{{ movie.id }}">
+        <span class="ratingbuttons">Rating</span>
+        <input type="radio" name="rating" value="1"><label for="rating1">1</label>
+        <input type="radio" name="rating" value="2"><label for="rating2">2</label>
+        <input type="radio" name="rating" value="3"><label for="rating3">3</label>
+        <input type="radio" name="rating" value="4"><label for="rating4">4</label>
+        <input type="radio" name="rating" value="5"><label for="rating5">5</label>
+
+        Movie review
+        <textarea name="movie_review" rows="3" cols="25"></textarea>
+        <input type="submit">
+      </form>
 
 
-<div class="">
-  <div class="">
-    <p>Here are the movie ratings for {{ movie_title }}:</p>
+<div class="rating2">
+<span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+</div>
+
+<!-- <div class="rating2">
+<form action="/add_rating" METHOD="POST" class="rating">
+        <h2>Rate this movie now:</h2>
+        <input type="hidden" name="id" value="{{ movie.id }}">
+        <span class="ratingbuttons">Rating</span>
+        <input type="radio" name="rating" value="1"><label for="rating1">☆</label>
+        <input type="radio" name="rating" value="2"><label for="rating2">☆</label>
+        <input type="radio" name="rating" value="3"><label for="rating3">☆</label>
+        <input type="radio" name="rating" value="4"><label for="rating4">☆</label>
+        <input type="radio" name="rating" value="5"><label for="rating5">☆</label>
+        <button type="submit">Submit</button>
+      </form>
+ -->
+
+{% if ratings %}
+<div>
+  <div>
+    <h2>Here are other ratings for {{ movie.title }} ({{ movie.year }}):</h2>
   </div>
 
   <table class="table" style="width:100%">
     <tr>
       <th>USER ID</th>
       <th>RATING</th>
+      <th>Review</th>
     </tr>
+    {% for rating in ratings %}
     <tr>
-      {% for rating in ratings %}  
-      <td><a href="/user_id/{{rating.user_id}}">User {{rating.username}}</a> </td>
-      <td> {{ rating.rating }} </td>
+      <td><a href="/user_profile?id={{rating.user_id}}">{{rating.user.username}}</a></td>
+      <td>{{ rating.rating }}</td>
+      <td>{{ rating.review }}</td>
     </tr>
-      {% endfor %}
+    {% endfor %}
   </table>
 </div>
+{% endif %}
 
 {% endblock %}
+</div>

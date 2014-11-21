@@ -1,9 +1,10 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer, String, DateTime, Float, Text, ForeignKey
+from sqlalchemy import Table, Column, Integer, String, Text, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.orm import scoped_session
+
 
 ENGINE = None
 Session = None
@@ -13,7 +14,10 @@ Session = None
 # which is good for debugging.
 # mysql://root@localhost/movies
 # 
-engine = create_engine("sqlite:///movies2.db", echo=False)
+
+# engine = create_engine('mysql://localhost/movies')
+
+engine = create_engine("mysql://root@localhost/vd", echo=False)
 session = scoped_session(sessionmaker(bind=engine,
                                       autocommit = False,
                                       autoflush = False))
@@ -22,43 +26,85 @@ session = scoped_session(sessionmaker(bind=engine,
 Base = declarative_base()
 Base.query = session.query_property()
 
+# find movie table, get all movies
+# for each movie, 
+# write a query for each field in YOUR schema
+# year = movie.release_Date.year
+# m = Movie(movie_title= movie.title, year = year)
+
+genres = Table('genres_association', Base.metadata,
+    Column('genre_id', Integer, ForeignKey('genres.id')),
+    Column('media_id', Integer, ForeignKey('media.id'))
+)
+
+people = Table('people_association', Base.metadata,
+    Column('people_id', Integer, ForeignKey('people.id')),
+    Column('media_id', Integer, ForeignKey('media.id'))
+)
 
 # Setting up a Movies class that inherits the Base class.
-class Movie(Base):
+class Media(Base):
 	# Informs SQLAlchemy that instances of this class will be stored in a table named users.
-	__tablename__ = "movies"
+	__tablename__ = "media"
 
 	id = Column(Integer, primary_key=True)
-	movie_title = Column(String(64), nullable=False)
+	imdbpyID = Column(Integer, nullable=True)
+	title = Column(String(400), nullable=False)
 	year = Column(Integer, nullable=True)
-	rated = Column(String(64), nullable=True)
-	released = Column(DateTime(10), nullable=True)
-	runtime = Column(Integer, nullable=True)
-	genre = Column(String(64), nullable=True)
-	director = Column(String(64), nullable=True)
-	writer = Column(String(64), nullable=True)
-	actors = Column(String(64), nullable=True)
+	runtime = Column(String(32), nullable=True)
+	color = Column(String(32), nullable=True)
+	language = Column(String(32), nullable=True)
+	country = Column(String(32), nullable=True)
+	mpaa_rating = Column(String(256), nullable=True)
 	plot = Column(Text, nullable=True)
-	language = Column(String(64), nullable=True)
-	country = Column(String(64), nullable=True)
-	awards = Column(String(64), nullable=True)
+	budget = Column(String(32), nullable=True)
+	gross = Column(String(64), nullable=True)
+	taglines = Column(String(256), nullable=True)
+	subtitles = Column(String(64), nullable=True)
+	kind = Column(String(16), nullable=True)
+	# actors = Column(String(64), nullable=True)
+	# director = Column(String(64), nullable=True)
+	# writer = Column(String(64), nullable=True)
+	# awards = Column(String(64), nullable=True)
 	poster = Column(String(256), nullable=True)
-	metascore = Column(Float, nullable=True)
-	imdbRating = Column(Float, nullable=True)
+	metascore = Column(Integer, nullable=True)
+	imdbRating = Column(Integer, nullable=True)
 	imdbVotes = Column(Integer, nullable=True)
-	imdbID = Column(String(64), nullable=True)
-	imdbtype = Column(String(64), nullable=True) ##movie or TV show?
-	tomatoRating = Column(Integer, nullable=True)
-	tomatoReviews = Column(Text, nullable=True)
-	tomatoFresh = Column(String(64), nullable=True)
-	tomatoRotten = Column(String(64), nullable=True)
-	tomatoConsensus = Column(String(256), nullable=True)
-	tomatoUserMeter = Column(Float, nullable=True)
-	tomatoUserRating = Column(Integer, nullable=True)
-	tomatoUserReviews = Column(Integer, nullable=True)
-	boxOffice = Column(Integer, nullable=True)
-	production = Column(Float, nullable=True)
-	website = Column(String(256), nullable=True)
+	imdburl = Column(String(256), nullable=True)
+	# tomatoRating = Column(Integer, nullable=True)
+	# tomatoReviews = Column(Text, nullable=True)
+	# tomatoFresh = Column(String(64), nullable=True)
+	# tomatoRotten = Column(String(64), nullable=True)
+	# tomatoConsensus = Column(String(256), nullable=True)
+	# tomatoUserMeter = Column(Float, nullable=True)
+	# tomatoUserRating = Column(Integer, nullable=True)
+	# tomatoUserReviews = Column(Integer, nullable=True)
+	
+	IMDBwebsite = Column(String(256), nullable=True)
+
+	genres = relationship('Genre', secondary=genres,
+        backref = backref('media', lazy='dynamic'))
+
+	people = relationship('People', secondary=people,
+        backref = backref('media', lazy='dynamic'))
+"""
+search by cast and crew, movie title, genre, 
+
+"""
+
+class Genre(Base):
+	__tablename__ = "genres"
+
+	id = Column(Integer, primary_key=True)
+	genre = Column(String(64), nullable=False)
+
+class People(Base):
+	__tablename__ = "people"
+
+	id = Column(Integer, primary_key=True)
+	name = Column(String(200), nullable=False)
+	role = Column(String(64), nullable=True)
+	notes = Column(String(64), nullable=True)
 
 class User(Base):
 	__tablename__ = "users"
@@ -74,15 +120,25 @@ class User(Base):
 	zipcode = Column(String(15), nullable=True)
 	# user = relationship("User", backref=backref("users_info", order_by=id))
 
+	def gendername(self):
+		if self.gender == 0:
+			return "Male"
+		elif self.gender == 1:
+			return "Female"
+		elif self.gender == 2:
+			return "Unspecified"
+
 class Rating(Base):
 	__tablename__ = "ratings"
 
 	id = Column(Integer, primary_key=True)
-	movie_id = Column(Integer, ForeignKey('movies.id'))
+	movie_id = Column(Integer, ForeignKey('media.id'))
 	user_id = Column(Integer, ForeignKey('users.id'))
 	rating = Column(Integer, nullable=True)
-	user = relationship("User",backref=backref("ratings", order_by=id))
-	movie = relationship("Movie",backref=backref("ratings", order_by=id))
+	review = Column(Text, nullable=True)
+	user = relationship("User", backref=backref("ratings", order_by=id))
+	movie = relationship("Media", backref=backref("ratings", order_by=id))
+	UniqueConstraint('media_id', 'user_id', name="uniq_rating")
 
 ### End class declarations
 
@@ -90,11 +146,11 @@ def connect():
     global ENGINE
     global Session
     # mysql://root@localhost/movies
-    ENGINE = create_engine("sqlite:///movies2.db", echo=True)
+    ENGINE = create_engine("mysql://root@localhost/vd", echo=True)
     Session = sessionmaker(bind=ENGINE)
 
     return session 
 
 # Create all tables in the engine. This is equivalent to "Create Table"
 # statements in raw SQL.
-# Base.metadata.create_all(engine)
+Base.metadata.create_all(engine)

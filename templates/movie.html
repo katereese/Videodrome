@@ -1,0 +1,20 @@
+{% extends 'base2.html' %}
+{% block body %}
+
+        
+    <tr><td><h2>{{ single_movie.name }}</h2> </td></tr><br>
+    <br>
+    
+    <a href = "{{ url_for('add_rating', movie_id=film.id) }}"> Want to add your own rating? </a> <br><br>
+
+    {%for entry in film.ratings%}
+    <tr><td>UserID: {{ entry.user_id }}</td><td> Rating: {{ entry.rating }} </td></tr><br><br>
+    {%endfor%}
+
+    </tr></td>
+    <br>
+
+    
+   
+
+{%endblock%}

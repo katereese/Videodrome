@@ -1,33 +1,51 @@
-{% extends "base.html" %}
+{% extends "base2.html" %}
 {% block body %}
 
-<h1>Welcome to Videodrome!
-	</h1>
-		<h2>The place to explore movies
-			</h2>
+    <title>Jumbotron Template for Bootstrap</title>
 
-<div id="Login">
-<form method="post" action="/login" id="login">
+<style>
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 50px;
+  padding-bottom: 20px;
+}
+</style>
 
-        <p>If you're a current user, please login.</p>
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container">
+        <h1>Find your next favorite movie.</h1>
+        <p>Welcome to Videohaus! The place to rate and explore movies and TV shows, and get relevant recommedations.</p>
+        <p><a class="btn btn-primary btn-lg" href="{{ url_for('sign_up') }}" role="button">Sign up now &raquo;</a></p>
+      </div>
+    </div>
 
-        <div id="email">
-            <p>Email</p>
-            <input type="text" name="email">
+    <div class="container">
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-4">
+          <h2><a href="/wall">Search and browse movies and TV shows</a></h2>
+          <p>Additional text here.</p>
+          <p><a class="btn btn-default" href="/wall" role="button">View details &raquo;</a></p>
         </div>
+        <div class="col-md-4">
+          <h2>Make ratings, reviews and lists</h2>
+          <p>Additional text</p>
+          <p><a class="btn btn-default" href="/movie_list" role="button">View details &raquo;</a></p>
+       </div>
+        <div class="col-md-4">
+          <h2>Find other users</h2>
+          <p>Additional text</p>
+          <p><a class="btn btn-default" href="/user_list" role="button">View details &raquo;</a></p>
+       </div>
+      </div>
 
-        <div id="pasword">
-            <p>Password</p>
-            <input type="text" name="password">
-        </div>
+      <hr>
 
-        <button type="submit" id="submit_button" name="submit">Submit</button> 
-</form>
+      <footer>
+        <p>&copy; Company 2014</p>
+      </footer>
+    </div> <!-- /container -->
 
-<div id="Sign-up">
-
-        <p>Or would you like to <a href="{{ url_for('sign_up') }}">sign up?</a>
-
-</div>
 
 {% endblock %}

@@ -1,18 +1,28 @@
-{% extends 'base.html' %}
+{% extends 'base2.html' %}
 {% block body %}
 
 <title>The Wall</title>
- <form action="/movie_prof" method="GET">
-        <h2>Search for a Movie</h2>
-        <input type="text" name="movie" placeholder="Movie">
-        <button class="" type="submit">Search</button>
-      </form>
+	<form action="/wall" method="GET">
+		<h2>Search for a Movie</h2>
+        	<input type="text" name="title" placeholder="Movie">
+        	<button type="submit">Search</button>
+ 	</form>
+
+    {% if movies %}
+ 	<table class="table" style="width:100%">
+    <tr>
+      <th>MOVIES</th>
+    </tr>
+    <tr>
+      {% for movie in movies %}  
+      <td><a href="/movie_prof?id={{ movie.id }}">{{ movie.title }} ({{ movie.year }})</a></td>
+    </tr>
+      {% endfor %}
+    </table>
+    {% endif %}
+<br>
+      <a href="/my_profile"><button class="" type="submit">View my reviews</button></a>
 
 
-      <br>
-      <a href="/my_reviews"><button class="" type="submit">View My Reviews</button></a>
-     
-      <br>
-      <a href="/add_review"><button class="" type="submit">Make a New Rating!</a>
 
 {% endblock %}

@@ -1,64 +1,35 @@
-{% extends 'base.html' %}
+{% extends 'base2.html' %}
 {% block body %}
 
+<div class="container">
+    <h1>Welcome to Videohaus</h1>
+    <h2>Please create a profile to start rating movies!</h2>
+</div>
 
-
-<h1>Welcome to Videodrome!
-	</h1>
-		<h2>Please create a profile and start rating movies!
-			</h2>
-
-<div id="sign_up">
-<form method='POST' action="/sign_up" id="submit_input">
-
-    <div id="email">
-        <p>email</p>
+<div class="container">
+<form method='POST' action="/sign_up" id="signup">
+    <label>email</label>
         <input type="text" name="email" placeholder="email">
-    </div>
-
-    <div id="password">
-        <p>password</p>
+    <label>password</label>
         <input type="text" name="password" placeholder="password">
-    </div>
-
-    <div id="username">
-        <p>username</p>
+    <label>username</label>
         <input type="text" name="username" placeholder="username">
-    </div>
-
-    <div id="first_name">
-        <p>first name</p>
+    <label>first_name</label>
         <input type="text" name="first_name" placeholder="first name">
-    </div>
-
-     <div id="last_name">
-        <p>last name</p>
+    <label>last_name</label>
         <input type="text" name="last_name" placeholder="last name">
-    </div>
-
-    <div id="age">
-        <p>age</p>
+    <label>age</label>
         <input type="text" name="age" placeholder="age">
-    </div>
-
-    <div id="gender">
-        <p>gender</p>
+    <label>gender</label>
         <select id="gender" name="gender">
           <option value = 0>male</option>
           <option value = 1>female</option>
           <option value = 2>unspecified</option>
         </select>
-    </div>
-
-    <div id="zipcode">
-        <p>zipcode</p>
+    <label>zipcode</label>
         <input type="text" name="zipcode" placeholder="zipcode">
-    </div>
-    
-    <div>
-    <input type="submit" id="submit_input" name="submit"></input> 
-    </div>
-
+    <input type="submit" id="submit_input" name="submit" class="btn btn-primary">
 </form>
 </div>
+
 {% endblock %}

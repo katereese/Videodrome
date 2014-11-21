@@ -1,14 +1,31 @@
-{% extends 'base.html' %}
+{% extends 'base2.html' %}
 {% block body %}
 
 <div>
-<h1>User Details</h1>
-    <h2>ID: {{user.id}}<br>
-        Username: {{user.username}}<br>
+<h2>Profile details for {{user.username}} </h2>
+    <h4>
         First Name: {{user.first_name}}<br>
         Last Name: {{user.last_name}}<br>
         Number of Ratings: {{ratings|length}}<br>
-    </h2>
+        Average rating: {{avg_rating}}
+    </h4>
 </div>
+
+<div>
+ <h3>Rating details
+ </h3>
+    <table class="table" style="width:100%">
+    <tr>
+      <th>MOVIE</th>
+      <th>RATING</th>
+    </tr>
+    {% for rating in ratings %}  
+    <tr>
+      <td><a href="/movie_prof?id={{ rating.movie_id }}">{{ rating.movie.title }}({{ rating.movie.year }})</a></td>
+      <td>{{ rating.rating }}</td>  
+    </tr>
+    {% endfor %}
+    </table>
+</div>      
 
 {% endblock %}

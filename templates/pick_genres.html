@@ -1,0 +1,29 @@
+{% extends "base2.html" %}
+{% block body %}
+
+<h2>Pick your favorite genres</h2>
+
+<div class="container">
+
+<table ="table" style="width:100%">
+   	
+   	<form action="/pick_genres" METHOD="POST" class="genres">
+
+	<dl>
+	{% for genre, movies in movie_list.iteritems() %}
+    	<dt>{{ genre }}  <input type="checkbox" name="pick_genre" value="genre.id"></dt>
+    	{% for movie in movies %}
+		{{ movie.title|e }}
+		{% endfor %}
+	{% endfor %}
+	</dl>
+	
+	<td><button type="submit">Submit</button></td>
+	</form>
+
+</table>
+
+
+</div>
+
+{% endblock %}
