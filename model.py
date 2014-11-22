@@ -41,6 +41,10 @@ people = Table('people_association', Base.metadata,
     Column('people_id', Integer, ForeignKey('people.id')),
     Column('media_id', Integer, ForeignKey('media.id'))
 )
+user_genres = Table('user_genre_assoc', Base.metadata,
+    Column('genre_id', Integer, ForeignKey('genres.id')),
+    Column('user_id', Integer, ForeignKey('users.id'))
+)
 
 # Setting up a Movies class that inherits the Base class.
 class Media(Base):
@@ -97,6 +101,7 @@ class Genre(Base):
 
 	id = Column(Integer, primary_key=True)
 	genre = Column(String(64), nullable=False)
+	
 
 class People(Base):
 	__tablename__ = "people"
@@ -120,6 +125,9 @@ class User(Base):
 	zipcode = Column(String(15), nullable=True)
 	# user = relationship("User", backref=backref("users_info", order_by=id))
 
+	genres = relationship('Genre', secondary=user_genres,
+		backref = backref('users', lazy='dynamic'))
+
 	def gendername(self):
 		if self.gender == 0:
 			return "Male"
@@ -127,6 +135,7 @@ class User(Base):
 			return "Female"
 		elif self.gender == 2:
 			return "Unspecified"
+
 
 class Rating(Base):
 	__tablename__ = "ratings"

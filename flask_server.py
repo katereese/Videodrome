@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, render_template, redirect, request, flash, session
-from model import User, Media, Rating, Genre, session as dbsession
+from model import User, Media, Rating, Genre, genres, session as dbsession
 from sqlalchemy.orm import joinedload
 import imdb
+from urllib2 import Request, urlopen
+import json
 # import omdb
-# import json
 
-
+# at.config[ ] = 'https://api.themoviedb.org/3/movie/550?api_key=e8fd17b3d580a7a6a17856a6a7c522aa'
 
 import sys
 reload(sys)
@@ -14,6 +15,17 @@ sys.setdefaultencoding("utf-8")
 
 app = Flask(__name__)
 app.secret_key ='bosco'
+
+
+# @app.route("/api")
+# headers = {
+#   'Accept': 'application/json'
+# }
+# request = Request('http://api.themoviedb.org/3/configuration', headers=headers)
+
+# response_body = urlopen(request).read()
+# print response_body
+
 
 @app.route("/")
 def index():
@@ -77,7 +89,7 @@ def sign_up_form():
 		created_user = dbsession.query(User).filter_by(email = email).first()
 		session["login"] = created_user.id
 		session["user"] = created_user
-		return redirect("/wall")
+		return redirect("/pick_genres")
 # need to create 'forgot your password' feature
 
 @app.route("/my_profile")
@@ -137,6 +149,16 @@ def user_wall():
 			if newtitle != movie.title:
 				print "wtf media %d (%s)" % (movie.id, newtitle)
 				movie.title = newtitle
+
+	# add a rate these movies section at the bottom which lists movies in each genre the user has chosen	
+	### FIXME COMMENTEDO UT  BY JOEL
+	# user = session["user"]
+	# genre_id = dbsession.query.genres.filter()
+
+ #    movie_dict = {}
+ #    for i in genre_list:
+	# 	media = dbsession.query(Media).filter(Media.genres.any(Genre.id==i.id)).limit(5).all()
+	# 	movie_dict[i] = media
 
 	return render_template("wall.html", movies=movies)
 
@@ -207,17 +229,25 @@ def average_rating(ratings):
 
 @app.route("/pick_genres")
 def pick_genres():
-    # get a list of genres to each genre
+    # get a list of all genres
+
+
+
     genre_list = dbsession.query(Genre).all()
-    
-    # get a list of movies ---- I need to instead query movies that match to each 
-    # genre matching on genre_id on genres_association table
 
     # create a dictionary with each genre as key and movie list as an array of values
     movie_dict = {}
     for i in genre_list:
-		media = dbsession.query(Media).filter(Media.genres.any(Genre.id==i.id)).limit(5).all()
-		movie_dict[i.genre] = media
+		# media = dbsession.query(Media).filter(Media.genres.any(Genre.id==i.id)).limit(5).all()
+
+		## improved version from discussion w/joel:
+		# more directly ask about genre_id in association table, so we don't have to
+		# join 3 tables and do a (slow) "subquery" for the "any"
+		#
+		# SELECT * FROM Media JOIN MediaGenres ON ... JOIN Genre ON ... WHERE Genre.id IN 
+		#     (SELECT ...)
+		media = dbsession.query(Media).join(genres).filter_by(genre_id=i.id).limit(5).all()
+		movie_dict[i] = media
 
 		# for a in media:
 		# 	print "******************", i.genre, a.title
@@ -226,28 +256,47 @@ def pick_genres():
 
     return render_template("pick_genres.html", movie_list=movie_dict)
 
-@app.route("/post_genres", "POST")
+@app.route("/post_genres", methods=["POST"])
 def post_genres():
-	# get user and user genre picks
-	user_id = int(session["user"].id)
-	pick_genre = request.form.get("pick_genre").id
+	# get user and user genre picks from pick_genres.html
+	# user = session["user"]
+	
+	# genre_ids_as_strings = request.form.getlist("genres")    -> ["1", "2", "3"]
+	# genre_ids = []
+	# for gi in genre_ids_as_strings:
+	# 	genre_ids.append( int(gi) )
 
-	user_genre_assoc.user_id = user_id
-	user_genre_assoc.genre_id = genre_id
+	genre_ids = [int(gi) for gi in request.form.getlist('genres')] # -> [1, 2, 3]
 
-	dbsession.add(user_genre_assoc)
+	# test print on genre id
+	print "genre from form: %s" % genre_ids
+
+	### DONT FORGET TO MAKE THIS A LOOP   -- JOEL
+
+	# user_obj = dbsession.query(User).filter_by(id=user.id).first()
+	for i in genre_ids:
+		genre_ids.append(i)
+		
+	# genre_obj = dbsession.query(Genre).filter_by(id=genre_id).first()
+		
+	# joel = User(...)
+	# dbsession.add(joel)
+
+	# joel.middle_name = '...'
+	# DON'T HAVE TO .add(joel)
+
 	dbsession.commit()
-
 	return redirect("/wall")
 
-# Takes a name in Surname, Firstname Morename The Third and returns
-# a human readable form
-def flip_name(name):
-	parts = name.split(', ', 1)
-	if len(parts) == 2:
-		return '%s %s' % (parts[1], parts[0])
-	else:
-		return name
+
+# # Takes a name in Surname, Firstname Morename The Third and returns
+# # a human readable form
+# def flip_name(name):
+# 	parts = name.split(', ', 1)
+# 	if len(parts) == 2:
+# 		return '%s %s' % (parts[1], parts[0])
+# 	else:
+# 		return name
 
 if __name__ == '__main__':
 	# starts the built-in web server on port 5000
