@@ -1,0 +1,11 @@
+{% extends "base2.html" %}
+{% block body %}
+<div class="container">
+	<h1>{{ genre.genre }}</h1>
+	<ul>
+		{% for movie in media %}
+			<li><a href="/movie_prof?id={{ movie.id }}">{{ movie.title }} ({{ movie.year }})</a></li>
+		{% endfor %}
+	</ul>
+</div>
+{% endblock %}

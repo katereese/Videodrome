@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+import collections
 from flask import Flask, render_template, redirect, request, flash, session
 from model import User, Media, Rating, Genre, genres, session as dbsession
 from sqlalchemy.orm import joinedload
-import imdb
-from urllib2 import Request, urlopen
-import json
+#import imdb
+#from urllib2 import Request, urlopen
+#import json
 # import omdb
 
 # at.config[ ] = 'https://api.themoviedb.org/3/movie/550?api_key=e8fd17b3d580a7a6a17856a6a7c522aa'
@@ -132,7 +133,6 @@ def user_search():
 
 @app.route("/wall")
 def user_wall():
-	# title - request.args.get("%title%")
 	title = request.args.get("title")
 	movies = None
 	if title:
@@ -144,23 +144,21 @@ def user_wall():
 
 		# filter out junk characters that break decoding with this error:
 		# UnicodeDecodeError: 'utf8' codec can't decode byte 0xa2 in position 43: invalid start byte
-		for movie in movies:
-			newtitle = movie.title.decode('utf-8', 'ignore')
-			if newtitle != movie.title:
-				print "wtf media %d (%s)" % (movie.id, newtitle)
-				movie.title = newtitle
+		fixtitle(movies)
 
 	# add a rate these movies section at the bottom which lists movies in each genre the user has chosen	
 	### FIXME COMMENTEDO UT  BY JOEL
 	# user = session["user"]
 	# genre_id = dbsession.query.genres.filter()
+	genre_dict = {}
+	if session["user"]:
+		user = dbsession.query(User).options(joinedload('genres')).filter_by(id = session["user"].id).first()
+		genre_dict = collections.OrderedDict()
+		for i in user.genres:
+			media = dbsession.query(Media).join(genres).filter_by(genre_id=i.id).limit(5).all()
+			genre_dict[i] = media
 
- #    movie_dict = {}
- #    for i in genre_list:
-	# 	media = dbsession.query(Media).filter(Media.genres.any(Genre.id==i.id)).limit(5).all()
-	# 	movie_dict[i] = media
-
-	return render_template("wall.html", movies=movies)
+	return render_template("wall.html", movies=movies, genres = genre_dict)
 
 	# gets the movie prof by calling OMDB API
 	# @app.route("/movie_prof", methods=["GET", "POST"])
@@ -172,6 +170,17 @@ def user_wall():
 	#     res = omdb.request(t=movie, r='JSON')
 	#     json_content = json.loads(res.content)
 	#     return render_template("movie_prof.html", movie=movie, json=json_content)
+
+@app.route("/genre_prof", methods=["GET"])
+def genre_profile():
+	id = int(request.args.get("id"))
+	if not id:
+		return redirect("/wall")
+
+	genre = dbsession.query(Genre).get(id)
+	media = dbsession.query(Media).join(genres).filter_by(genre_id=id).limit(100).all()
+	fixtitle(media)
+	return render_template("genre_prof.html", media = media, genre = genre)
 
 @app.route("/movie_prof", methods=["GET"])
 def movie_profile():
@@ -229,38 +238,36 @@ def average_rating(ratings):
 
 @app.route("/pick_genres")
 def pick_genres():
-    # get a list of all genres
+	# get a list of all genres
+	user_id = int(session["user"].id)
+	genre_list = dbsession.query(Genre).all()
+	# Load current user and all her/his/it genre selections
+	user = dbsession.query(User).options(joinedload('genres')).filter_by(id = user_id).first()
 
+	# create a dictionary with each genre as key and movie list as an array of values
+	movie_dict = collections.OrderedDict()
+	for i in genre_list:
+		if i in user.genres:
+			i.selected = True
 
-
-    genre_list = dbsession.query(Genre).all()
-
-    # create a dictionary with each genre as key and movie list as an array of values
-    movie_dict = {}
-    for i in genre_list:
-		# media = dbsession.query(Media).filter(Media.genres.any(Genre.id==i.id)).limit(5).all()
-
-		## improved version from discussion w/joel:
-		# more directly ask about genre_id in association table, so we don't have to
-		# join 3 tables and do a (slow) "subquery" for the "any"
-		#
-		# SELECT * FROM Media JOIN MediaGenres ON ... JOIN Genre ON ... WHERE Genre.id IN 
-		#     (SELECT ...)
 		media = dbsession.query(Media).join(genres).filter_by(genre_id=i.id).limit(5).all()
 		movie_dict[i] = media
 
-		# for a in media:
-		# 	print "******************", i.genre, a.title
-		# 	for g in a.genres:
-		# 		print g.genre
+		## Bad: media = dbsession.query(Media).filter(Media.genres.any(Genre.id==i.id)).limit(5).all()
+		## improved version from discussion w/joel:
+		# more directly ask about genre_id in association table, so we don't have to
+		# join 3 tables and do a (slow) "subquery" for the "any"
 
-    return render_template("pick_genres.html", movie_list=movie_dict)
+	return render_template("pick_genres.html", movie_list=movie_dict)
 
 @app.route("/post_genres", methods=["POST"])
 def post_genres():
 	# get user and user genre picks from pick_genres.html
-	# user = session["user"]
-	
+	user_obj = get_current_user()
+	for g in user_obj.genres:
+		user_obj.genres.remove(g)
+	dbsession.flush()
+
 	# genre_ids_as_strings = request.form.getlist("genres")    -> ["1", "2", "3"]
 	# genre_ids = []
 	# for gi in genre_ids_as_strings:
@@ -272,13 +279,13 @@ def post_genres():
 	print "genre from form: %s" % genre_ids
 
 	### DONT FORGET TO MAKE THIS A LOOP   -- JOEL
+	
+	for gi in genre_ids:
+		genre_obj = dbsession.query(Genre).filter_by(id=gi).first()
+		user_obj.genres.append(genre_obj)
 
-	# user_obj = dbsession.query(User).filter_by(id=user.id).first()
-	for i in genre_ids:
-		genre_ids.append(i)
-		
 	# genre_obj = dbsession.query(Genre).filter_by(id=genre_id).first()
-		
+
 	# joel = User(...)
 	# dbsession.add(joel)
 
@@ -288,6 +295,18 @@ def post_genres():
 	dbsession.commit()
 	return redirect("/wall")
 
+def get_current_user():
+	if session["user"]:
+		return dbsession.query(User).filter_by(id = session["user"].id).first()
+	else:
+		return None
+
+def fixtitle(movies):
+	for movie in movies:
+		newtitle = movie.title.decode('utf-8', 'ignore')
+		if newtitle != movie.title:
+			print "wtf media %d (%s)" % (movie.id, newtitle)
+			movie.title = newtitle
 
 # # Takes a name in Surname, Firstname Morename The Third and returns
 # # a human readable form

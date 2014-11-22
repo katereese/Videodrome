@@ -1,14 +1,15 @@
 {% extends 'base2.html' %}
 {% block body %}
 
-<title>The Wall</title>
+<title>Wall</title>
+<div class="container">
 	<form action="/wall" method="GET">
 		<h2>Search for a Movie</h2>
         	<input type="text" name="title" placeholder="Movie">
         	<button type="submit">Search</button>
  	</form>
 
-    {% if movies %}
+  {% if movies %}
  	<table class="table" style="width:100%">
     <tr>
       <th>MOVIES</th>
@@ -18,11 +19,18 @@
       <td><a href="/movie_prof?id={{ movie.id }}">{{ movie.title }} ({{ movie.year }})</a></td>
     </tr>
       {% endfor %}
-    </table>
-    {% endif %}
-<br>
-      <a href="/my_profile"><button class="" type="submit">View my reviews</button></a>
+  </table>
+  {% endif %}
+  {% if genres %}
+      {% for genre, movies in genres.iteritems() %}
+      <h2><a href="/genre_prof?id={{ genre.id }}">{{ genre.genre }}</a></h2>
+      <ul class="genrelisting">
+        {% for movie in movies %}
+        <li><a href="/movie_prof?id={{ movie.id}}">{{ movie.title|e }} ({{ movie.year }})</a></li>
+        {% endfor %}
+      </ul>
+      {% endfor %}
+  {% endif %}
 
-
-
+</div>
 {% endblock %}

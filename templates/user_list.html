@@ -1,7 +1,7 @@
 {% extends 'base2.html' %}
 {% block body %}
 
-<title>The Wall</title>
+<title>User Search</title>
 	<form action="/user_profile" method="GET">
     	<h2>Search for a User</h2>
         <input type="text" name="user" placeholder="user id">
@@ -16,7 +16,7 @@ table, th, td {
 </head>
 <body>
 
-<table style="width:50%">
+<table style="width:50%" class="table">
   <col align="left">
   <col align="left">
   <col align="right">
@@ -24,6 +24,7 @@ table, th, td {
     <th>User</th>
     <th>Age</th>
     <th>Ratings</th>
+    <th>Average</th>
   </tr>
   {% for user in users %}
   <tr>

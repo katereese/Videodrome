@@ -8,16 +8,16 @@
 <table ="table" style="width:100%">
    	
    	<form action="/post_genres" METHOD="POST" class="genres">
-
 	<dl>
 	{% for genre, movies in movie_list.iteritems() %}
-    	<dt>{{ genre.genre }}  <input type="checkbox" name="genres" value="{{ genre.id }}"></dt>
+    	<dt><input type="checkbox" name="genres" value="{{ genre.id }}"
+    		{% if genre.selected %}checked{% endif %}> {{ genre.genre }}</dt>
     	{% for movie in movies %}
 		{{ movie.title|e }}
 		{% endfor %}
 	{% endfor %}
 	</dl>
-	
+
 	<td><button type="submit">Submit</button></td>
 	</form>
 

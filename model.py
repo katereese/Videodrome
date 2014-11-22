@@ -101,7 +101,7 @@ class Genre(Base):
 
 	id = Column(Integer, primary_key=True)
 	genre = Column(String(64), nullable=False)
-	
+	selected = False	
 
 class People(Base):
 	__tablename__ = "people"
@@ -126,7 +126,7 @@ class User(Base):
 	# user = relationship("User", backref=backref("users_info", order_by=id))
 
 	genres = relationship('Genre', secondary=user_genres,
-		backref = backref('users', lazy='dynamic'))
+		order_by='Genre.genre', backref = backref('users', lazy='dynamic'))
 
 	def gendername(self):
 		if self.gender == 0:
@@ -154,7 +154,6 @@ class Rating(Base):
 def connect():
     global ENGINE
     global Session
-    # mysql://root@localhost/movies
     ENGINE = create_engine("mysql://root@localhost/vd", echo=True)
     Session = sessionmaker(bind=ENGINE)
 
