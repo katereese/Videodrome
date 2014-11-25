@@ -13,10 +13,12 @@
  	<table class="table" style="width:100%">
     <tr>
       <th>MOVIES</th>
+      <th>PLOT</th>
     </tr>
     <tr>
       {% for movie in movies %}  
       <td><a href="/movie_prof?id={{ movie.id }}">{{ movie.title }} ({{ movie.year }})</a></td>
+      <td>{% if movie.shortPlot %}{{movie.shortPlot}}{% endif %}</td>
     </tr>
       {% endfor %}
   </table>
@@ -26,11 +28,16 @@
       <h2><a href="/genre_prof?id={{ genre.id }}">{{ genre.genre }}</a></h2>
       <ul class="genrelisting">
         {% for movie in movies %}
-        <li><a href="/movie_prof?id={{ movie.id}}">{{ movie.title|e }} ({{ movie.year }})</a></li>
+        <li>
+          <a href="/movie_prof?id={{ movie.id}}">{{ movie.title|e }} ({{ movie.year }})</a>
+          {% if movie.shortPlot %}<span class="plot">{{movie.shortPlot}}</span>{% endif %}
+        </li>
         {% endfor %}
       </ul>
       {% endfor %}
   {% endif %}
+
+
 
 </div>
 {% endblock %}

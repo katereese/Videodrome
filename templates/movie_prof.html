@@ -3,18 +3,49 @@
 
 <title>Movie Profile {{ movie.title }} ({{ movie.year }})</title>
 <div class="container">
+  {% if movie.poster %}
+      <img src="{{ movie.poster }}" align="right" style="margin-left: 2em; ">
+  {% endif %}
+
   <h1>{{ movie.title }} ({{ movie.year }})</h1>
+  <a href="/movie_prof_API?id={{ movie.id }}">Load from OMDB</a>
   <h3>Videohaus score {{ avg_rating }}</h3>
     <ul>
       <li>Released on: {{ movie.year }}</li>
-      <li>Running length: {{ movie.runtime }}</li>
+      <li>Running length: {{ movie.runtime }} minutes</li>
       <li>{{ movie.color }}</li>
-     <!--  <li> IMDB: {{ poster }} </li> -->
     </ul>
     <h4>Plot</h4>
     <p class="plot">
       {{ movie.plot }}
     </p>
+    <p class="cast">
+      <h4>Cast</h4>
+      Director: {{ movie.director }}<br/>
+      Actors: {{ movie.actors }}
+    </p>
+
+    {% if movie.imdbID %}
+    <div class="imdb">
+      <h4>IMDB</h4>
+      <ul>
+        <li>IMDB rating: {{ movie.imdbRating }}</li>
+        <li>Check <a href="{{ movie.imdbURL }}">it out on IMDB</a></li>
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if movie.tomatoMeter or movie.tomatoUserMeter %}
+    <div class="rottenTomatoes">
+      <h4>Rotten Tomatoes</h4>
+      <ul>
+        <li>Tomato Critic Meter: {{ movie.tomatoMeter }}</li>
+        <li>Tomato User Meter: {{ movie.tomatoUserMeter }}</li>
+        <li>Tomato User Score: {{ movie.tomatoUserRating }}</li>
+      </ul>
+    </div>
+    {% endif %}
+
 
       <form action="/add_rating" METHOD="POST" class="rating">
         <h2>Rate this movie now:</h2>

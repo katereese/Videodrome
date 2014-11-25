@@ -1,16 +1,18 @@
 {% extends 'base2.html' %}
 {% block body %}
 
-<div>
-<h2>Profile details for {{user.username}} </h2>
-    <h4>
-        First Name: {{user.first_name}}<br>
-        Last Name: {{user.last_name}}<br>
-        Number of Ratings: {{ratings|length}}<br>
-        Average rating: {{avg_rating}}
-    </h4>
-</div>
-
+<div class="container-fluid well span6">
+  <div class="row-fluid">
+        <div class="span2">
+            <h3><img src="https://cdn1.iconfinder.com/data/icons/round-black-icons-2/78/user-512.png" class="img-circle" width="60" height="60">Profile details for {{user.username}}</h3>
+            <br>
+            <h4>Full Name: {{ user.first_name }} {{ user.last_name }}</h4>
+            <h4>Email: {{ user.email }}</h4>
+            <h4>Age: {{ user.age }}</h4>
+            <h4>Number of Ratings: {{ ratings|length }}</h4>
+            <h4>Average rating: {{avg_rating}}</h4>
+        </div>
+<br>
 <div>
  <h3>Rating details
  </h3>
@@ -18,14 +20,22 @@
     <tr>
       <th>MOVIE</th>
       <th>RATING</th>
+      <th>REVIEW</th>
     </tr>
     {% for rating in ratings %}  
     <tr>
-      <td><a href="/movie_prof?id={{ rating.movie_id }}">{{ rating.movie.title }}({{ rating.movie.year }})</a></td>
-      <td>{{ rating.rating }}</td>  
+      <td><a href="/movie_prof?id={{ rating.movie_id }}">{{ rating.movie.title }}  ({{ rating.movie.year }})</a></td>
+      <td>{{ rating.rating }}</td>
+      <td>{{ rating.review }}</td>  
     </tr>
     {% endfor %}
     </table>
+    
+    <form action="/follow_user" method="post">
+    <input name="followee_id" type="hidden" value="{{ user.id }}">
+    <td><button type="submit">Follow user</button></td>
+    </form>
+
 </div>      
 
 {% endblock %}

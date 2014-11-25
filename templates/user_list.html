@@ -2,9 +2,9 @@
 {% block body %}
 
 <title>User Search</title>
-	<form action="/user_profile" method="GET">
+	<form action="/user_search" method="GET">
     	<h2>Search for a User</h2>
-        <input type="text" name="user" placeholder="user id">
+        <input type="text" name="email" placeholder="email">
         <button class="" type="submit">Search</button>
 	</form>
 
@@ -28,7 +28,7 @@ table, th, td {
   </tr>
   {% for user in users %}
   <tr>
-    <td>{{ user.id }}</td>
+    <td><a href="/user_profile?id={{ user.id }}">{{ user.email }}</a></td>
     <td>{{ user.age }}</td>
     <td>{{ user.ratings|length }} </td>
   </tr>

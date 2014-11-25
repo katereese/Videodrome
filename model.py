@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
-from sqlalchemy import Table, Column, Integer, String, Text, ForeignKey, UniqueConstraint
+from sqlalchemy import Table, Column, DateTime, Float, Integer, String, Text, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.orm import scoped_session
@@ -19,8 +19,8 @@ Session = None
 
 engine = create_engine("mysql://root@localhost/vd", echo=False)
 session = scoped_session(sessionmaker(bind=engine,
-                                      autocommit = False,
-                                      autoflush = False))
+									  autocommit = False,
+									  autoflush = False))
 
 # Base class definition. It is simply required for SQLALchemy's magic to work. 
 Base = declarative_base()
@@ -33,17 +33,20 @@ Base.query = session.query_property()
 # m = Movie(movie_title= movie.title, year = year)
 
 genres = Table('genres_association', Base.metadata,
-    Column('genre_id', Integer, ForeignKey('genres.id')),
-    Column('media_id', Integer, ForeignKey('media.id'))
+	Column('genre_id', Integer, ForeignKey('genres.id')),
+	Column('media_id', Integer, ForeignKey('media.id'))
 )
-
 people = Table('people_association', Base.metadata,
     Column('people_id', Integer, ForeignKey('people.id')),
     Column('media_id', Integer, ForeignKey('media.id'))
 )
 user_genres = Table('user_genre_assoc', Base.metadata,
-    Column('genre_id', Integer, ForeignKey('genres.id')),
-    Column('user_id', Integer, ForeignKey('users.id'))
+	Column('genre_id', Integer, ForeignKey('genres.id')),
+	Column('user_id', Integer, ForeignKey('users.id'))
+)
+user_follows = Table('user_follows_assoc', Base.metadata,
+	Column('user_id', Integer, ForeignKey('users.id')),
+	Column('follow_id', Integer, ForeignKey('users.id'))
 )
 
 # Setting up a Movies class that inherits the Base class.
@@ -66,16 +69,20 @@ class Media(Base):
 	taglines = Column(String(256), nullable=True)
 	subtitles = Column(String(64), nullable=True)
 	kind = Column(String(16), nullable=True)
-	# actors = Column(String(64), nullable=True)
-	# director = Column(String(64), nullable=True)
+	actors = Column(Text, nullable=True)
+	director = Column(String(64), nullable=True)
 	# writer = Column(String(64), nullable=True)
 	# awards = Column(String(64), nullable=True)
 	poster = Column(String(256), nullable=True)
 	metascore = Column(Integer, nullable=True)
-	imdbRating = Column(Integer, nullable=True)
-	imdbVotes = Column(Integer, nullable=True)
-	imdburl = Column(String(256), nullable=True)
-	# tomatoRating = Column(Integer, nullable=True)
+	imdbRating = Column(Float, nullable=True)
+	imdbID = Column(String(64), nullable=True)
+	imdbURL = Column(String(256), nullable=True)
+	tomatoMeter = Column(Integer, nullable=True)
+	tomatoUserMeter = Column(Integer, nullable=True)
+	tomatoUserRating = Column(Float, nullable=True)
+	shortPlot = Column(Text, nullable=True)
+	omdbLoad = Column(DateTime, nullable=True)
 	# tomatoReviews = Column(Text, nullable=True)
 	# tomatoFresh = Column(String(64), nullable=True)
 	# tomatoRotten = Column(String(64), nullable=True)
@@ -83,14 +90,12 @@ class Media(Base):
 	# tomatoUserMeter = Column(Float, nullable=True)
 	# tomatoUserRating = Column(Integer, nullable=True)
 	# tomatoUserReviews = Column(Integer, nullable=True)
-	
-	IMDBwebsite = Column(String(256), nullable=True)
 
 	genres = relationship('Genre', secondary=genres,
-        backref = backref('media', lazy='dynamic'))
+		backref = backref('media', lazy='dynamic'))
 
 	people = relationship('People', secondary=people,
-        backref = backref('media', lazy='dynamic'))
+		backref = backref('media', lazy='dynamic'))
 """
 search by cast and crew, movie title, genre, 
 
@@ -101,7 +106,6 @@ class Genre(Base):
 
 	id = Column(Integer, primary_key=True)
 	genre = Column(String(64), nullable=False)
-	selected = False	
 
 class People(Base):
 	__tablename__ = "people"
@@ -128,6 +132,11 @@ class User(Base):
 	genres = relationship('Genre', secondary=user_genres,
 		order_by='Genre.genre', backref = backref('users', lazy='dynamic'))
 
+	follows = relationship('User', secondary=user_follows,
+		primaryjoin=id==user_follows.c.user_id,
+        secondaryjoin=id==user_follows.c.follow_id,
+        backref='followers')
+
 	def gendername(self):
 		if self.gender == 0:
 			return "Male"
@@ -152,12 +161,12 @@ class Rating(Base):
 ### End class declarations
 
 def connect():
-    global ENGINE
-    global Session
-    ENGINE = create_engine("mysql://root@localhost/vd", echo=True)
-    Session = sessionmaker(bind=ENGINE)
+	global ENGINE
+	global Session
+	ENGINE = create_engine("mysql://root@localhost/vd", echo=True)
+	Session = sessionmaker(bind=ENGINE)
 
-    return session 
+	return session 
 
 # Create all tables in the engine. This is equivalent to "Create Table"
 # statements in raw SQL.

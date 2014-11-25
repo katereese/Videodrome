@@ -1,21 +1,11 @@
 {% extends "base2.html" %}
 {% block body %}
 
-    <title>Jumbotron Template for Bootstrap</title>
-
-<style>
-/* Move down content because we have a fixed navbar that is 50px tall */
-body {
-  padding-top: 50px;
-  padding-bottom: 20px;
-}
-</style>
-
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
       <div class="container">
         <h1>Find your next favorite movie.</h1>
-        <p>Welcome to Videohaus! The place to rate and explore movies and TV shows, and get relevant recommedations.</p>
+        <p>Welcome to Videodrome. The place to rate and explore movies and get relevant recommedations.</p>
         <p><a class="btn btn-primary btn-lg" href="{{ url_for('sign_up') }}" role="button">Sign up now &raquo;</a></p>
       </div>
     </div>
@@ -24,14 +14,14 @@ body {
       <!-- Example row of columns -->
       <div class="row">
         <div class="col-md-4">
-          <h2><a href="/wall">Search and browse movies and TV shows</a></h2>
+          <h2><a href="/wall">Search movies and make ratings and reviews</a></h2>
           <p>Additional text here.</p>
           <p><a class="btn btn-default" href="/wall" role="button">View details &raquo;</a></p>
         </div>
         <div class="col-md-4">
-          <h2>Make ratings, reviews and lists</h2>
+          <h2>Search by genre</h2>
           <p>Additional text</p>
-          <p><a class="btn btn-default" href="/wall" role="button">View details &raquo;</a></p>
+          <p><a class="btn btn-default" href="/pick_genres" role="button">View details &raquo;</a></p>
        </div>
         <div class="col-md-4">
           <h2>Find other users</h2>

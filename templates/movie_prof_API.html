@@ -4,9 +4,18 @@
 <h1>Movie Info
 	</h1>
 
-	<p>{{ movie }}</p>
-	<p>{{ Actors }}</p>
-	<p>{{ json }}</p>	
+	<p>{{ movie.title }}</p>
+	<p>{{ movie.runtime }} <b>minutes</b></p>
+	<p>Metascore: {{ movie.metascore }}</p>
+	<p>Actors: {{ movie.actors }}</p>
+	<p>Director: {{ movie.director }}</p>
+	<p>Short plot: {{ movie.shortPlot }}</p>
+	<p>IMDB: <a href="{{ movie.imdbURL }}">{{ movie.imdbID }}</a> {{ movie.imdbRating }}<p>
+	<p>Tomato meter {{ movie.tomatoMeter }}
+	   Tomato user meter {{ movie.tomatoUserMeter }}
+	   Tomato user ratings {{ movie.tomatoUserRating }}
+	</p>
+	<img src="{{ movie.poster }}">
 
 </body>
 </html>

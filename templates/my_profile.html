@@ -2,31 +2,55 @@
 {% block body %}
 
  <title>My Profile</title>
+<br><br>
+<div class="container-fluid well span6">
+  <div class="row-fluid">
+        <div class="span2">
+            <h3><img src="https://cdn1.iconfinder.com/data/icons/round-black-icons-2/78/user-512.png" class="img-circle" width="60" height="60">  Here are your profile details, <b>{{ session["user"].username }}.</b></h3>
+            <br>
+            <h4>Full Name: {{ user.first_name }} {{ user.last_name }}</h4>
+            <h4>Email: {{ user.email }}</h4>
+            <h4>Age: {{ user.age }}</h4>
+            <h4>Number of Ratings: {{ ratings|length }}</h4>
+        </div>
+  <br>
+  <br>      
+        <div class="span2">
+          <div>
+             <h3>Your ratings</h3>
+                <table class="table" style="width:100%">
+                <tr>
+                  <th>MOVIE</th>
+                  <th>RATING</th>
+                </tr>
+                <tr>
+                  {% for rating in ratings %}  
+                  <td><SPAN> {{ rating.movie.title }} </SPAN></td>
+                  <td><SPAN> {{ rating.rating }} </SPAN></td>  
+                  <td><SPAN> {{ rating.review }} </SPAN></td>  
+                </tr>
+                  {% endfor %}
+                </table>
+                <h3>Followed users</h3>
+              <ul>
+                {% for followee in user.follows %}
+                  <li>{{ followee.username }}</li>
+                {% endfor %}
+              </ul>
 
-<div>
-<h2>Here are your profile details, <b>{{ session["user"].username }}.</b></h2>
-    <h4>
-        Age: {{ user.age }}<br>
-        Gender: {{ user.gendername() }}<br>
-        Zipcode: {{ user.zipcode }}<br>
-        Number of Ratings: {{ ratings|length }}<br>
-    </h4>
+              <h3>Followers</h3>
+              <ul>
+                {% for follower in user.followers %}
+                  <li>{{ follower.username }}</li>
+                {% endfor %}
+              </ul>
+
+
+
+          </div>
+        </div>
+  </div>
 </div>
 
-<div>
- <h3>Your ratings
- </h3>
-    <table class="table" style="width:100%">
-    <tr>
-      <th>MOVIE</th>
-      <th>RATING</th>
-    </tr>
-    <tr>
-      {% for rating in ratings %}  
-      <td><SPAN> {{ rating.movie.title }} </SPAN> </td>
-      <td><SPAN> {{ rating.rating }} </SPAN> </td>  
-    </tr>
-      {% endfor %}
-</div>      
 
  {% endblock %}
