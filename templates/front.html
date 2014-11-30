@@ -1,41 +1,43 @@
 {% extends "base2.html" %}
 {% block body %}
 
+<body style="background-image:url(http://static.businessinsider.com/image/51abedf4eab8eaa41e000026/image.jpg)">
+
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
       <div class="container">
         <h1>Find your next favorite movie.</h1>
-        <p>Welcome to Videodrome. The place to rate and explore movies and get relevant recommedations.</p>
+        <p>Welcome to Videodrome. The place to explore movies and get relevant recommedations.</p>
         <p><a class="btn btn-primary btn-lg" href="{{ url_for('sign_up') }}" role="button">Sign up now &raquo;</a></p>
       </div>
     </div>
 
-    <div class="container">
+<!--     <div class="container"> -->
       <!-- Example row of columns -->
-      <div class="row">
+<!--       <div class="row">
         <div class="col-md-4">
-          <h2><a href="/wall">Search movies and make ratings and reviews</a></h2>
-          <p>Additional text here.</p>
-          <p><a class="btn btn-default" href="/wall" role="button">View details &raquo;</a></p>
+          <h2>Search movies and make ratings and reviews</h2>
+          <p><a class="btn btn-default" href="/wall" role="button">Movies &raquo;</a></p>
         </div>
         <div class="col-md-4">
           <h2>Search by genre</h2>
-          <p>Additional text</p>
-          <p><a class="btn btn-default" href="/pick_genres" role="button">View details &raquo;</a></p>
+          <p><a class="btn btn-default" href="/pick_genres" role="button">Genres &raquo;</a></p>
        </div>
         <div class="col-md-4">
           <h2>Find other users</h2>
-          <p>Additional text</p>
-          <p><a class="btn btn-default" href="/user_list" role="button">View details &raquo;</a></p>
+          <p><a class="btn btn-default" href="/user_list" role="button">Users&raquo;</a></p>
        </div>
-      </div>
+      </div> -->
 
-      <hr>
+      <br>
+      <br>
+      <br>
+      <br>
 
-      <footer>
+<!--       <footer>
         <p>&copy; Company 2014</p>
-      </footer>
+      </footer> -->
     </div> <!-- /container -->
-
+</body>
 
 {% endblock %}

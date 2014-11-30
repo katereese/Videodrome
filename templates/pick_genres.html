@@ -10,7 +10,7 @@
    	<form action="/post_genres" METHOD="POST" class="genres">
 	<dl>
 	<!-- iterate over dictionary items with genre as key and list of movies as value -->
-	{% for genre, movies in movie_list.iteritems() %}
+	{% for genre in genres %}
 		<!-- each dict item has a checkbox with genre id as the value to be passed to server -->
 		<!-- if genre is selected/checked print genre name -->
     	<dt><input type="checkbox" name="genres" value="{{ genre.id }}"
@@ -18,13 +18,6 @@
     			checked
     		{% endif %}>
     		{{ genre.genre }}</dt>
-    	<!-- for each movie in each movies list from dict value -->
-    	<ul>
-    	{% for movie in movies %}
-		<!-- |e manually escapes out special charters displayed movie title -->
-		<li><a href="/movie_prof?id={{ movie.id }}">{{ movie.title|e }}</a></li>
-		{% endfor %}
-		</ul>
 	{% endfor %}
 	</dl>
 

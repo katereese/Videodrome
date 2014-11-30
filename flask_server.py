@@ -4,7 +4,10 @@ import datetime
 from flask import Flask, render_template, redirect, request, flash, session
 from model import User, Media, Rating, Genre, genres, session as dbsession
 from sqlalchemy.orm import joinedload
-from sqlalchemy import desc, func
+from sqlalchemy import desc, func, and_
+from sqlalchemy.sql import label
+from sqlalchemy.sql.expression import text, column
+from werkzeug.contrib.cache import SimpleCache
 import json
 import omdb
 import urllib
@@ -15,6 +18,8 @@ sys.setdefaultencoding("utf-8")
 
 app = Flask(__name__)
 app.secret_key ='bosco'
+# Simple cache should only be initialized once
+cache = SimpleCache()
 
 @app.route("/")
 def index():
@@ -22,14 +27,11 @@ def index():
 
 @app.route("/login", methods=["POST"])  
 def login():
-
 	# fetch email and password from userinput client-side
 	email = request.form.get("email")
 	password = request.form.get("password")
-	
 	# check for user email and password in db
 	u = dbsession.query(User).filter_by(email=email).filter_by(password=password).first()
-   
 	#if user is in db, add to session (cookie dictionary), if not redirect to login url
 	if u:
 		session["login"] = u.id
@@ -48,74 +50,94 @@ def logout():
 
 @app.route("/sign_up")
 def sign_up():
-	return render_template("sign_up.html")
+	return render_template("sign_up.html", user=get_current_user())
 
 @app.route("/sign_up", methods=["POST"])
 def sign_up_form():
-	## input new user row into database and redirect to wall page
+		## input new user input into database
+		email = request.form.get("email")
+		password = request.form.get("password")
+		username = request.form.get("username")
+		first_name = request.form.get("first_name")
+		last_name = request.form.get("last_name")
+		gender = int(request.form.get("gender"))
+		age = int(request.form.get("age"))
+		zipcode = request.form.get("zipcode")
+		
+		# create an instance of User with email, password, username, etc. as attributes
+		user = User(email=email, password=password, username=username, first_name=first_name, 
+			last_name=last_name, gender=gender, age=age, zipcode=zipcode)
+		
+		# check for email in db, if not there, add it to db
+		if dbsession.query(User).filter_by(email = email).first():
+			flash("This email address is already in use. Please try again.")
+			return redirect("/sign_up")
+		else:
+			dbsession.add(user)
+			dbsession.commit()
+			created_user = dbsession.query(User).filter_by(email = email).first()
+			session["login"] = created_user.id
+			session["user"] = created_user
+			return redirect("/pick_genres")
 
-	# fetch email, password, etc., from userinput client-side
-	# add if request.form else redirect back to sign_up?
-	email = request.form.get("email")
-	password = request.form.get("password")
-	username = request.form.get("username")
-	first_name = request.form.get("first_name")
-	last_name = request.form.get("last_name")
-	gender = int(request.form.get("gender"))
-	age = int(request.form.get("age"))
-	zipcode = request.form.get("zipcode")
-	
-	# create an instance of User with email, password, username, etc. as attributes
-	user = User(email=email, password=password, username=username, first_name=first_name, last_name=last_name, gender=gender, age=age, zipcode=zipcode)
-
-	# check for email in db, if not there, add it to db
-	if dbsession.query(User).filter_by(email = email).first():
-		flash("This email address is already in use. Please try again.")
-		return redirect("/sign_up")
+def get_current_user():
+	if 'user' in session:
+		return dbsession.query(User).\
+			options(joinedload('genres')).\
+			filter_by(id = session['user'].id).first()
 	else:
-		dbsession.add(user)
-		dbsession.commit()
-		created_user = dbsession.query(User).filter_by(email = email).first()
-		session["login"] = created_user.id
-		session["user"] = created_user
-		return redirect("/pick_genres")
-# need to create 'forgot your password' feature
+		return None
 
 @app.route("/my_profile")
 def my_profile():
 	# fetch user_id from the session dictionary of logged-in user
 	user_id = session["login"]
-	# query for a User class object filtering by its user_id column and the user_id variable,
-	# stored in the session variable named login
+	# query Rating object filtering on user_id column and user_id stored in the "login" session
 	ratings = dbsession.query(Rating).filter_by(user_id = user_id).all()
+	# query User object, joining in follows association table
 	user = dbsession.query(User).options(joinedload('follows')).filter_by(id=user_id).first()
 	return render_template("my_profile.html", user=user, ratings=ratings)
 
 @app.route("/user_list")
-def user_list(): 
+def user_list():
+	loggedin_user = int(session["user"].id)
+	# print user_id
 	user_list = []
+	# queries list of user objects sorted by highest number of ratings made
 	user_ids = dbsession.query(Rating.user_id).group_by(Rating.user_id).order_by(desc(func.count(Rating.id))).limit(10).all()
+	# iterates through each object in list and appends the first element, which is user id
 	for u_id in user_ids:
-		user = dbsession.query(User).filter_by(id = u_id[0]).first()
-		user_list.append(user)
-	return render_template("user_list.html", users=user_list)
+		if u_id[0] == loggedin_user:
+			continue
+		else:
+			user = dbsession.query(User).filter_by(id = u_id[0]).first()
+			user_list.append(user)
+	
+	# query User object, joining in follows association table
+	user = dbsession.query(User).options(joinedload('follows')).filter_by(id=loggedin_user).first()
+	return render_template("user_list.html", users=user_list, user=user)
 
 @app.route("/user_search")
 def user_search():
-	print "search"
-	#retrieve user input from user_list.html and set variable user to input
+	loggedin_user_id = int(session["user"].id)
+	
+	# retrieve user input from user_list.html and set variable user to input
 	email_input = request.args.get("email")
 	if not email_input:
 		return redirect("/user_list")
 
-	#query database by user id
+	# query database by user email
 	user_info = dbsession.query(User).filter_by(email = email_input).first()
 	if not user_info:
 		# user wasn't found
 		flash("This user does not exist. Please try again.")
 		return redirect("/user_list")
-
-	return redirect("/user_profile?id=%d" % user_info.id)
+	
+	# logic that redirects user to their profile
+	if user_info.id == loggedin_user_id:
+		return redirect("/my_profile")
+	else:
+		return redirect("/user_profile?id=%d" % user_info.id)
 
 @app.route("/user_profile", methods=["GET"])
 def user_profile():
@@ -124,23 +146,28 @@ def user_profile():
 	ratings = dbsession.query(Rating).options(joinedload('movie')).filter_by(user_id = user_info.id).all()
 
 	avg_rating = average_rating(ratings)
-	return render_template("user_profile.html", user=user_info, ratings=ratings, avg_rating=avg_rating) #title=movie_info) #user_id=user, username=username, first_name=first_name, last_name=last_name, ratings=ratings)
+	return render_template("user_profile.html", user=user_info, ratings=ratings, avg_rating=avg_rating)
 
 @app.route("/follow_user", methods=["POST"])
 def follow_user():
 	loggedin_user_id = int(session["user"].id)
+	# fetch followee id from template button submit form
 	followee_id = int(request.form.get('followee_id'))
-
+	#test
 	print "%d wants to follow %d" % (loggedin_user_id, followee_id)
 
-	follow_obj = dbsession.query(User).get(followee_id)
+	# create objects that gets the followee and follower/loggedin user ids
 	follower_obj = dbsession.query(User).get(loggedin_user_id)
-	follower_obj.follows.append(follow_obj)
+	followee_obj = dbsession.query(User).get(followee_id)
+
+	# append the follower object with a value of followee obj through the follows relationship
+	follower_obj.follows.append(followee_obj)
 	dbsession.commit()
 	return redirect("/my_profile")
 
 @app.route("/wall")
 def user_wall():
+	## movie search
 	title = request.args.get("title")
 	movies = None
 	if title:
@@ -149,26 +176,89 @@ def user_wall():
 		# fall back on matching parts of the string
 		if not movies:
 			movies = dbsession.query(Media).filter(Media.title.contains(title)).all()
-		
 		fixtitle(movies)
 
-	# add a rate these movies section at the bottom which lists movies in each genre the user has chosen	
-	### FIXME COMMENTEDO UT  BY JOEL
-	# user = session["user"]
-	# genre_id = dbsession.query.genres.filter()
-	genre_dict = {}
+	## lists Friends recommendations
+
+	#
+	# select media.* FROM media
+	#    JOIN ratings ON media.id = ratings.movie_id 
+    #    JOIN user_follows_assoc ON user_follows_assoc.follow_id = ratings.user_id AND user_follows_assoc.user_id = $USER_ID;
+	#
+
+
 	if "user" in session:
+		# joins logged in user and the follows relationship
+		user = dbsession.query(User).options(joinedload('follows')).filter_by(id = session["user"].id).first()
+
+		# extract user id:s of people the user is following
+		followed_ids = []
+		for u in user.follows:
+			followed_ids.append(u.id)
+
+		# query each followed user and their rated movies
+		follows_media = dbsession.query(Media,
+			label('avg_rating', func.avg(Rating.rating))).\
+			join(Rating).\
+			join(User).\
+			filter(User.id.in_ (followed_ids)).\
+			group_by(Media.id).\
+			all()
+
+	## lists Videodrome recommendations
+	genre_dict = {}
+	# queries the user's picked genres
+	if "user" in session:
+		# joins logged in user and the genres relationship, which includes user ids and genre ids
 		user = dbsession.query(User).options(joinedload('genres')).filter_by(id = session["user"].id).first()
+		# keeps order intact
 		genre_dict = collections.OrderedDict()
-		for i in user.genres:
-			media = base_media_query().join(genres).filter_by(genre_id=i.id).limit(5).all()
 
-			fixtitle(media)
-			genre_dict[i] = media
+		# check cache if it already has a genre_dict for this user id
+		genre_dict_from_cache = cache.get(session["user"].id)
+		# if not, then generate the media
+		if genre_dict_from_cache is None:
+			print "\n\nNot found in Cache\n\n"
+			# genre id:s for query below
+			genre_ids = []
+			for i in user.genres:
+				genre_ids.append(i.id)
 
-	return render_template("wall.html", movies=movies, genres = genre_dict)
+			# for each genre associated to the user
+			base_query_result = base_media_query()
+			for i in user.genres:
+				base_query_in_loop = base_query_result
+				# queries lists of movies for each picked genre, by joining the genres relationship
+				## previous query: media = base_media_query().join(genres).filter_by(genre_id=i.id).limit(5).all()
+				### new portion of query removes movies user has rated
+				media = base_query_in_loop\
+					.join(genres)\
+					.filter_by(genre_id=i.id)\
+					.outerjoin(Rating, and_(Rating.movie_id==Media.id, Rating.user_id == user.id))\
+					.filter(Rating.movie_id==None)\
+					.limit(5)\
+					.all()
+				# unicode fix
+				fixtitle(media)
+				
+				# assigns each genre item as key to (list of movies) value
+				genre_dict[i] = media
+			# set the generated media inside cache for the next time
+			cache.set(session["user"].id, genre_dict, timeout=10*60)
+		else:
+			# Found it in cache! Use the cached value!
+			print "\n\nFound in cache!\n\n"
+			genre_dict = genre_dict_from_cache
+
+	return render_template("wall.html", movies=movies, genres = genre_dict, media=follows_media)
+
+### need to query movies follower have rated, sorting in descending order
+### dbsession.query(Media).filter_by(user_id=follow_id).outerjoin(Rating, Rating.movie.id==Media.id) order_by(desc('__________'))
+### need to pass multiple conditionals on the outerjoin where user_id=??
 
 def base_media_query():
+	print "I'm querying all the darn movies again.."
+	# sorts movies by higest tomato meter, then highest imdb rating ---- want to filter by already rated
 	return dbsession.query(Media).order_by(desc('tomatoMeter')).order_by(desc('imdbRating'))
 
 # gets the movie prof by calling OMDB API
@@ -184,7 +274,7 @@ def movie_prof_API():
 
 @app.route("/import_from_OMDB")
 def import_from_OMDB():
-	movie_list = dbsession.query(Media).filter_by(omdbLoad=None).filter_by(language='English').limit(10)
+	movie_list = dbsession.query(Media).filter_by(omdbLoad=None).limit(10)
 	print ">>> Starting update"
 	updated = 0
 	for movie in movie_list:
@@ -262,10 +352,11 @@ def genre_profile():
 	id = int(request.args.get("id"))
 	if not id:
 		return redirect("/wall")
-
 	genre = dbsession.query(Genre).get(id)
 	media = base_media_query().join(genres).filter_by(genre_id=id).limit(100).all()
 	fixtitle(media)
+	
+
 	return render_template("genre_prof.html", media = media, genre = genre)
 
 @app.route("/movie_prof", methods=["GET"])
@@ -297,6 +388,7 @@ def movie_profile():
 def add_rating():
 	#get movie from search in movie_prof.html
 	movie_id = int(request.form.get("id"))
+	movie_from_wall = request.form.get("rating_from_wall")
 	user_id = int(session["user"].id)
 	score = int(request.form.get("rating"))
 	review = request.form.get("movie_review")
@@ -313,9 +405,16 @@ def add_rating():
 
 	dbsession.add(rating)
 	dbsession.commit()
+	clear_user_cache()
 
 	## flash message that it's been added?
-	return redirect("/movie_prof?id=%d" % movie_id)
+	if movie_from_wall:
+		return redirect("/wall")
+	else:
+		return redirect("/movie_prof?id=%d" % movie_id)
+
+def clear_user_cache():
+	cache.set(session["user"].id, None, timeout=0)
 
 @app.route("/movie_list")
 def movie_list():
@@ -333,63 +432,95 @@ def average_rating(ratings):
 
 @app.route("/pick_genres")
 def pick_genres():
-	# get loggin in user id
-	user_id = int(session["user"].id)
 	# get a list of all genres
-	genre_list = dbsession.query(Genre).all()
+	genres = dbsession.query(Genre).all()
 	# Load current user and all her/his/it genre selections
-	user = dbsession.query(User).options(joinedload('genres')).filter_by(id = user_id).first()
+	user = get_current_user()
 	
 	# create a dictionary with each genre as key and movie list as an array of values
-	movie_dict = collections.OrderedDict()
-	for i in genre_list:
-		media = base_media_query().join(genres).filter_by(genre_id=i.id).limit(5).all()
-		fixtitle(media)
-		movie_dict[i] = media
+	#movie_dict = collections.OrderedDict()
+	#media_base = base_media_query()
+	#for i in genre_list:
+	#	temp_media = media_base
+	#	media = temp_media.join(genres).filter_by(genre_id=i.id).limit(5).all()
+	#	fixtitle(media)
+	#	movie_dict[i] = media
 
-		## Bad: media = dbsession.query(Media).filter(Media.genres.any(Genre.id==i.id)).limit(5).all()
-		## improved version from discussion w/joel:
-		# more directly ask about genre_id in association table, so we don't have to
-		# join 3 tables and do a (slow) "subquery" for the "any"
-
-	return render_template("pick_genres.html", movie_list=movie_dict, user=user)
+	return render_template("pick_genres.html", genres=genres, user=user)
 
 @app.route("/post_genres", methods=["POST"])
 def post_genres():
 	# get logged in user and user genre picks from pick_genres.html
 	user_obj = get_current_user()
-	for g in user_obj.genres:
-		user_obj.genres.remove(g)
-	dbsession.commit()
+	genre_ids = [int(gi) for gi in request.form.getlist('genres')]
 
-	# genre_ids_as_strings = request.form.getlist("genres")    -> ["1", "2", "3"]
-	# genre_ids = []
-	# for gi in genre_ids_as_strings:
-	# 	genre_ids.append( int(gi) )
+	# modifying the collection that we're itering over is no bueno
+	genres_in_db = dbsession.query(Genre).all()
+	for g in genres_in_db:
+		if g in user_obj.genres:
+			user_obj.genres.remove(g)
 
-	genre_ids = [int(gi) for gi in request.form.getlist('genres')] # -> [1, 2, 3]
+	try:
+		print "Committing..\n\n"
+		dbsession.commit()
+	except:
+		print "\n\n\nRolling back uh oh\n\n\n"
+		dbsession.rollback()
 
+	# to_remove = []
+	# to_add = []
+	# cache_needs_revalidation = False
+
+	# for g in genres_in_db:
+	# 	if g not in genre_ids:
+	# 		to_remove.append(g)
+
+	# for gi in genre_ids:
+	# 	if gi not in genres_in_db:
+	# 		to_add.append(gi)
+
+	# if len(to_add) > 0 or len(to_remove) > 0:
+	# 	cache_needs_revalidation = True
+
+	# for genre in to_add:
+	# 	user_obj.genres.append(genre)
+	# try:
+	# 	dbsession.commit()
+	# except:
+	# 	dbsession.rollback()
+
+	# for genre in to_remove:
+	# 	user_obj.genres.remove(genre)
+	# try:
+	# 	dbsession.commit()
+	# except:
+	# 	dbsession.rollback()
+
+	# if cache_needs_revalidation:
+	# 	cache.set(session["user"].id, None, timeout=0)
+
+
+	
 	for gi in genre_ids:
 		genre_obj = dbsession.query(Genre).filter_by(id=gi).first()
 		user_obj.genres.append(genre_obj)
-
-	dbsession.commit()
+	try:
+		dbsession.commit()
+		cache.set(session["user"].id, None, timeout=0)
+	except:
+		dbsession.rollback()
 	return redirect("/wall")
-
-def get_current_user():
-	if "user" in session:
-		return dbsession.query(User).filter_by(id = session["user"].id).first()
-	else:
-		return None
 
 # filter out junk characters that break decoding with this error:
 # UnicodeDecodeError: 'utf8' codec can't decode byte 0xa2 in position 43: invalid start byte
 def fixtitle(movies):
+	if movies==None:
+		return
 	for movie in movies:
-		newtitle = movie.title.decode('utf-8', 'ignore')
-		if newtitle != movie.title:
-			print "wtf media %d (%s)" % (movie.id, newtitle)
-			movie.title = newtitle
+		movie.title = movie.title.decode('utf-8', 'ignore')
+		if movie.shortPlot:
+			movie.shortPlot = movie.shortPlot.decode('utf-8', 'ignore')
+
 
 if __name__ == '__main__':
 	# starts the built-in web server on port 5000

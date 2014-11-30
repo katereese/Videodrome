@@ -37,7 +37,6 @@
         <div class="navgroup" id="navloggedin"><!-- post log in menu -->
           <ul>
             <li><a href="/my_profile?id={{ session["login"] }}">Hi there, {{ session["user"].username }}</a></li>
-            <li><a href="/pick_genres">Pick genres</a></li>
             <li><a href="/logout">Log out</a></li>
           </ul>
         </div>
@@ -50,8 +49,19 @@
           </form>
         </div>
           {% endif %}
-        <br style="clear: both">
+          <br style="clear: both">
+        {% if session.get("login", False) %}
+        <div id="subnav">
+          <ul>
+            <li><a href="/user_list">FRIENDS</a></li>
+            <li><a href="/wall">MOVIES</a></li>
+            <li><a href="/my_profile">PROFILE</a></li>
+            <li><a href="/pick_genres">GENRES</a></li> 
+          </ul>
+        </div>
+        {% endif %}
     </nav>
+
     <!-- </div> -->
 <div class="container">
 

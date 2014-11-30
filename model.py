@@ -26,12 +26,6 @@ session = scoped_session(sessionmaker(bind=engine,
 Base = declarative_base()
 Base.query = session.query_property()
 
-# find movie table, get all movies
-# for each movie, 
-# write a query for each field in YOUR schema
-# year = movie.release_Date.year
-# m = Movie(movie_title= movie.title, year = year)
-
 genres = Table('genres_association', Base.metadata,
 	Column('genre_id', Integer, ForeignKey('genres.id')),
 	Column('media_id', Integer, ForeignKey('media.id'))
@@ -71,8 +65,6 @@ class Media(Base):
 	kind = Column(String(16), nullable=True)
 	actors = Column(Text, nullable=True)
 	director = Column(String(64), nullable=True)
-	# writer = Column(String(64), nullable=True)
-	# awards = Column(String(64), nullable=True)
 	poster = Column(String(256), nullable=True)
 	metascore = Column(Integer, nullable=True)
 	imdbRating = Column(Float, nullable=True)
@@ -83,13 +75,6 @@ class Media(Base):
 	tomatoUserRating = Column(Float, nullable=True)
 	shortPlot = Column(Text, nullable=True)
 	omdbLoad = Column(DateTime, nullable=True)
-	# tomatoReviews = Column(Text, nullable=True)
-	# tomatoFresh = Column(String(64), nullable=True)
-	# tomatoRotten = Column(String(64), nullable=True)
-	# tomatoConsensus = Column(String(256), nullable=True)
-	# tomatoUserMeter = Column(Float, nullable=True)
-	# tomatoUserRating = Column(Integer, nullable=True)
-	# tomatoUserReviews = Column(Integer, nullable=True)
 
 	genres = relationship('Genre', secondary=genres,
 		backref = backref('media', lazy='dynamic'))
@@ -127,6 +112,8 @@ class User(Base):
 	age = Column(Integer, nullable=True)
 	gender = Column(Integer, nullable=True)
 	zipcode = Column(String(15), nullable=True)
+	avg_rating = 0.0
+
 	# user = relationship("User", backref=backref("users_info", order_by=id))
 
 	genres = relationship('Genre', secondary=user_genres,

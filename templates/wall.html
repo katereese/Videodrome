@@ -16,28 +16,72 @@
       <th>PLOT</th>
     </tr>
     <tr>
-      {% for movie in movies %}  
+      {% for movie in movies %}
       <td><a href="/movie_prof?id={{ movie.id }}">{{ movie.title }} ({{ movie.year }})</a></td>
-      <td>{% if movie.shortPlot %}{{movie.shortPlot}}{% endif %}</td>
+      <td>{% if movie.shortPlot %}{{ movie.shortPlot }}{% endif %}</td>
     </tr>
       {% endfor %}
   </table>
   {% endif %}
-  {% if genres %}
-      {% for genre, movies in genres.iteritems() %}
-      <h2><a href="/genre_prof?id={{ genre.id }}">{{ genre.genre }}</a></h2>
-      <ul class="genrelisting">
-        {% for movie in movies %}
-        <li>
-          <a href="/movie_prof?id={{ movie.id}}">{{ movie.title|e }} ({{ movie.year }})</a>
-          {% if movie.shortPlot %}<span class="plot">{{movie.shortPlot}}</span>{% endif %}
-        </li>
+
+<br>
+
+  <div>
+    {% if media %}
+      <h3>Friend's Recommendations</h3>
+        {% for i, rating in media %}
+          <li>
+            <a href="/movie_prof?id={{ media.id }}">{{ i.title }} ({{ i.year }})</a>
+            <span class="avg_rating">{{ rating }}</span>
+            {% if i.shortPlot %}<span class="plot">{{ i.shortPlot|e }}</span>{% endif %}
+            <form action="/add_rating" METHOD="POST">
+              <input type="hidden" name="id" value="{{ i.id }}">
+              <input type="hidden" name="rating_from_wall" value="{{ i.id }}">
+              <input type="radio" name="rating" value="1">
+              <input type="radio" name="rating" value="2">
+              <input type="radio" name="rating" value="3">
+              <input type="radio" name="rating" value="4">
+              <input type="radio" name="rating" value="5">
+              <input type="submit" value="Rate now">
+          </form>
+          </li>
+          </li>
         {% endfor %}
-      </ul>
-      {% endfor %}
-  {% endif %}
-
-
+    {% endif %}
+  </div>
+    
+  <div>
+    {% if genres %}
+        <h3>Videodrome Recommendations</h3>
+        {% for genre, movies in genres.iteritems() %}
+        <h4><a href="/genre_prof?id={{ genre.id }}">{{ genre.genre }}</a></h4>
+        <ul class="genrelisting">
+          {% for movie in movies %}
+          <li>
+            <a href="/movie_prof?id={{ movie.id }}">{{ movie.title|e }} ({{ movie.year }})</a>
+            {% if movie.shortPlot %}<span class="plot">{{ movie.shortPlot|e }}</span>{% endif %}
+            <form action="/add_rating" METHOD="POST">
+              <input type="hidden" name="id" value="{{ movie.id }}">
+              <input type="hidden" name="rating_from_wall" value="{{ movie.id }}">
+              <input type="radio" name="rating" value="1">
+              <input type="radio" name="rating" value="2">
+              <input type="radio" name="rating" value="3">
+              <input type="radio" name="rating" value="4">
+              <input type="radio" name="rating" value="5">
+              <input type="submit" value="Rate now">
+          </form>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endfor %}
+    {% else %}
+    {% endif %}
+    {% if 'user' in session %}
+    <p><a class="btn btn-primary btn" href="{{ url_for('pick_genres') }}" role="button">Update genres &raquo;</a></p>
+    {% else %}
+      <p><a href="/sign_up">Sign up now to get recommendations!</a></p>
+    {% endif %}
+  </div>
 
 </div>
 {% endblock %}

@@ -9,7 +9,7 @@
 
   <h1>{{ movie.title }} ({{ movie.year }})</h1>
   <a href="/movie_prof_API?id={{ movie.id }}">Load from OMDB</a>
-  <h3>Videohaus score {{ avg_rating }}</h3>
+  <h3>Videodrome score {{ avg_rating }}</h3>
     <ul>
       <li>Released on: {{ movie.year }}</li>
       <li>Running length: {{ movie.runtime }} minutes</li>
@@ -46,7 +46,7 @@
     </div>
     {% endif %}
 
-
+  {% if session["user"] %}
       <form action="/add_rating" METHOD="POST" class="rating">
         <h2>Rate this movie now:</h2>
         <input type="hidden" name="id" value="{{ movie.id }}">
@@ -57,15 +57,16 @@
         <input type="radio" name="rating" value="4"><label for="rating4">4</label>
         <input type="radio" name="rating" value="5"><label for="rating5">5</label>
 
-        Movie review
+        <b>Review</b>
         <textarea name="movie_review" rows="3" cols="25"></textarea>
         <input type="submit">
       </form>
 
-
 <div class="rating2">
 <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
 </div>
+
+  {% endif %} 
 
 <!-- <div class="rating2">
 <form action="/add_rating" METHOD="POST" class="rating">
@@ -84,23 +85,30 @@
 {% if ratings %}
 <div>
   <div>
-    <h2>Here are other ratings for {{ movie.title }} ({{ movie.year }}):</h2>
+    <h2>Ratings for {{ movie.title }} ({{ movie.year }}):</h2>
   </div>
 
   <table class="table" style="width:100%">
     <tr>
-      <th>USER ID</th>
-      <th>RATING</th>
+      <th>Username</th>
+      <th>Rating</th>
       <th>Review</th>
     </tr>
     {% for rating in ratings %}
     <tr>
+      {% if session["user"] %}
+      <td><a href="/my_profile">{{rating.user.username}}</a></td>
+      <td>{{ rating.rating }}</td>
+      <td>{{ rating.review }}</td>
+      {% else %}
       <td><a href="/user_profile?id={{rating.user_id}}">{{rating.user.username}}</a></td>
       <td>{{ rating.rating }}</td>
       <td>{{ rating.review }}</td>
+      {% endif %}
     </tr>
     {% endfor %}
   </table>
+
 </div>
 {% endif %}
 

@@ -2,6 +2,51 @@
 {% block body %}
 
 <div class="container">
+
+    {% if user %}
+    
+        <h3> Hi {{ user.username }}! Update your profile below.</h4>
+
+    <div class="container">
+    <form method='POST' action="/sign_up" id="signup">
+    <label>email</label>
+        <input type="text" name="email" placeholder="{{ user.email }}">
+ <!--    <label>password</label>
+        <input type="password" name="password" placeholder="{{ user.password }}"> -->
+    <label>username</label>
+        <input type="text" name="username" placeholder="{{ user.username }}">
+    <label>first_name</label>
+        <input type="text" name="first_name" placeholder="{{ user.first_name }}">
+    <label>last_name</label>
+        <input type="text" name="last_name" placeholder="{{ user.last_name }}">
+    <label>age</label>
+        <input type="text" name="age" placeholder="{{ user.age }}">
+    <label>gender</label>
+        <select id="gender" name="{{ user.gender }}">
+          {% if user.gender == 0 %}
+          <option value = 0 selected>male</option>
+          <option value = 1>female</option>
+          <option value = 2>unspecified</option>
+          {% elif user.gender == 1 %}
+          <option value = 0 >male</option>
+          <option value = 1 selected>female</option>
+          <option value = 2>unspecified</option>
+          {% elif user.gender == 2 %}
+          <option value = 0>male</option>
+          <option value = 1>female</option>
+          <option value = 2 selected>unspecified</option>
+          {% endif %}
+        </select>
+    <label>zipcode</label>
+        <input type="text" name="zipcode" placeholder="{{ user.zipcode }}">
+        <br>
+    <input type="submit" id="submit_input" name="submit" class="btn btn-primary">
+</form>
+</div>
+        
+
+    {% else %}
+
     <h1>Welcome to Videodrome</h1>
     <h2>Please create a profile to start rating movies!</h2>
 </div>
@@ -11,7 +56,7 @@
     <label>email</label>
         <input type="text" name="email" placeholder="email">
     <label>password</label>
-        <input type="text" name="password" placeholder="password">
+        <input type="password" name="password" placeholder="password">
     <label>username</label>
         <input type="text" name="username" placeholder="username">
     <label>first_name</label>
@@ -28,8 +73,10 @@
         </select>
     <label>zipcode</label>
         <input type="text" name="zipcode" placeholder="zipcode">
+        <br>
     <input type="submit" id="submit_input" name="submit" class="btn btn-primary">
 </form>
 </div>
 
+    {% endif %}
 {% endblock %}
