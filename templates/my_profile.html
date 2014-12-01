@@ -6,8 +6,8 @@
 <div class="container-fluid well span6">
   <div class="row-fluid">
       <div class="span2">
-          <h3><img src="https://cdn1.iconfinder.com/data/icons/round-black-icons-2/78/user-512.png" class="img-circle" width="60" height="60">  <b>{{ session["user"].username }}'s profile</b></h3>
-          <br>
+          <h3><img src="https://cdn1.iconfinder.com/data/icons/round-black-icons-2/78/user-512.png" class="img-circle" width="70" height="70"></h3>
+            <h3>@{{ session["user"].username }}</h3>
             <h4>Full Name: {{ user.first_name }} {{ user.last_name }}</h4>
             <h4>Email: {{ user.email }}</h4>
             <h4>Age: {{ user.age }}</h4>
@@ -24,7 +24,7 @@
           {% if ratings %}
           <div>
              <h3>Ratings</h3>
-                <table class="table table-bordered" style="width:100%">
+                <table class="table table-striped" style="width:100%">
           <!--         <tr>
                     <th>Movie</th>
                     <th>Rating</th>
@@ -48,7 +48,7 @@
               <h3>Followed users</h3>
               <ul>
                 {% for followee in user.follows %}
-                  <li><a href="/user_profile?id={{ followee.id }}">{{ followee.username }}</a></li>
+                  <li><a href="/user_profile?id={{ followee.id }}">@{{ followee.username }}</a></li>
                 {% endfor %}
               </ul>
           {% endif %}
@@ -57,7 +57,7 @@
               <h3>Followers</h3>
               <ul>
                 {% for follower in user.followers %}
-                  <li><a href="/user_profile?id={{ follower.id }}">{{ follower.username }}</a></li>
+                  <li><a href="/user_profile?id={{ follower.id }}">@{{ follower.username }}</a></li>
                 {% endfor %}
               </ul>
           {% endif %}

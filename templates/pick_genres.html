@@ -13,15 +13,15 @@
 	{% for genre in genres %}
 		<!-- each dict item has a checkbox with genre id as the value to be passed to server -->
 		<!-- if genre is selected/checked print genre name -->
-    	<dt><input type="checkbox" name="genres" value="{{ genre.id }}"
+    	<dt><input type="checkbox" class="checkbox-primary" name="genres" value="{{ genre.id }}"
     		{% if genre in user.genres %}
     			checked
     		{% endif %}>
-    		{{ genre.genre }}</dt>
+    		  {{ genre.genre }}</dt>
 	{% endfor %}
 	</dl>
 
-	<td><button type="submit">Submit</button></td>
+	<td><button type="submit" class="btn btn-primary">Submit</button></td>
 	</form>
 
 </table>

@@ -221,7 +221,7 @@ def user_wall():
 		for u in user.follows:
 			followed_ids.append(u.id)
 
-		# queries for movies that have been rated by people the user follows
+		# queries movies that have been rated by people the user follows
 		# but not the user itself.
 		#
 		# 'reset_joinpoint().outerjoin(...).filter()' filters out the user's own
@@ -262,9 +262,10 @@ def user_wall():
 			base_query_result = base_media_query()
 			for i in user.genres:
 				base_query_in_loop = base_query_result
-				# queries lists of movies for each picked genre, by joining the genres relationship
-				## previous query: media = base_media_query().join(genres).filter_by(genre_id=i.id).limit(5).all()
-				### new portion of query removes movies user has rated
+				# queries movie lists for each picked genre, by joining the genres relationship:
+				# media = base_media_query().join(genres).filter_by(genre_id=i.id)
+				## removes movies user has rated:
+				## .outerjoin(Rating, and_(Rating.movie_id==Media.id, Rating.user_id == user.id)).filter(Rating.movie_id==None)\
 				media = base_query_in_loop\
 					.join(genres)\
 					.filter_by(genre_id=i.id)\
@@ -277,6 +278,7 @@ def user_wall():
 
 				# assigns each genre item as key to (list of movies) value
 				genre_dict[i] = media
+				
 			# set the generated media inside cache for the next time
 			cache.set(session["user"].id, genre_dict, timeout=10*60)
 		else:
@@ -388,6 +390,9 @@ def average_rating(ratings):
 	for r in ratings:
 		sum = sum + r.rating
 	return float("{0:.1f}".format(float(sum) / len(ratings)))
+
+def format_avg_rating(rating):
+	return float("{0:.1f}".format(rating))
 
 @app.route("/pick_genres")
 def pick_genres():

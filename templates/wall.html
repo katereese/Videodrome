@@ -2,12 +2,15 @@
 {% block body %}
 
 <title>Wall</title>
-<div class="container">
-	<form action="/movie_search" method="GET">
+
+	<form action="/movie_search" method="GET" class="form-inline">
 		<h2>Search for a Movie</h2>
-        	<input type="text" name="title" placeholder="Movie">
-        	<button type="submit">Search</button>
+        <div class="col-xs-4">
+          	<input type="text" name="title" placeholder="Movie" class="form-control">
+          	<button type="submit" class="btn btn-primary btn-sm">Search</button>
+        </div>
  	</form>
+  <br>
 
   {% if movies %}
  	<table class="table" style="width:100%">
@@ -55,7 +58,9 @@
               <input type="radio" name="rating" value="5">
               <input type="submit" value="Rate" class="btn btn-default btn-xs">
               <input type="submit" name="not_interested" value="Not Interested" class="btn btn-default btn-xs">
-              <span class="avg_rating" margin-left="5px"><b>Average Rating:</b> {{ rating }}</span>
+              <span class="wall_rating" margin-left="5px"><b>Videodrome Rating:</b> {{ rating|round(1, 'common') }} / 5</span>
+              <span class="wall_rating"><b>Rotten Tomatoes:</b>{% if i.tomatoUserRating %} {{ i.tomatoUserRating }} / 5</span>{% endif %}
+              <span class="wall_rating"><b>IMDB:</b>{% if i.imdbRating %} {{ i.imdbRating }} / 10</span>{% endif %}</span>
             </form>
 
           </li>
@@ -89,6 +94,8 @@
               <input type="radio" name="rating" value="5">
               <input type="submit" value="Rate" class="btn btn-default btn-xs">
               <input type="submit" name="not_interested" value="Not Interested" class="btn btn-default btn-xs">
+              <span class="wall_rating"><b>Rotten Tomatoes:</b>{% if movie.tomatoUserRating %} {{ movie.tomatoUserRating }} / 10</span>{% endif %}
+              <span class="wall_rating"><b>IMDB:</b>{% if movie.imdbRating %} {{ movie.imdbRating }} / 5</span>{% endif %}</span>
             </form>
             <br>
           </li>

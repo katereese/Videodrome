@@ -4,7 +4,7 @@
 <div class="container-fluid well span6">
   <div class="row-fluid">
         <div class="span2">
-            <h3><img src="https://cdn1.iconfinder.com/data/icons/round-black-icons-2/78/user-512.png" class="img-circle" width="60" height="60"> Profile details for {{user.username}}</h3>
+            <h3><img src="https://cdn1.iconfinder.com/data/icons/round-black-icons-2/78/user-512.png" class="img-circle" width="60" height="60"> Profile details for @{{user.username}}</h3>
             <br>
             <h4>Full Name: {{ user.first_name }} {{ user.last_name }} </h4>
             <h4>Email: {{ user.email }}</h4>
@@ -23,12 +23,14 @@
       <th>Rating</th>
       <th>Review</th>
     </tr>
-    {% for rating in ratings %}  
+    {% for rating in ratings %}
+      {% if rating.rating != 0 %}
     <tr>
       <td><a href="/movie_prof?id={{ rating.movie_id }}">{{ rating.movie.title }}  ({{ rating.movie.year }})</a></td>
       <td>{{ rating.rating }}</td>
       <td>{{ rating.review }}</td>  
     </tr>
+      {% endif %}
     {% endfor %}
     </table>
     {% if 'user' in session %}
@@ -38,7 +40,7 @@
         <td><button type="submit">Follow user</button></td>
         </form>
       {% else %}
-        <p><i>You are following {{ user.username }}.</i></p>
+        <p><i>You are following @{{ user.username }}.</i></p>
       {% endif %}
     {% endif %}
 

@@ -7,7 +7,7 @@
     
         <h3> Hi {{ user.username }}! Update your profile below.</h4>
 
-    <div class="container">
+    <div class="col-xs-2">
     <form method='POST' action="/update_prof" id="signup">
   <!--   <label>email</label>
         <input type="text" name="email" value="{{ user.email }}"> -->
@@ -16,13 +16,13 @@
   <!--   <label>username</label>
         <input type="text" name="username" value="{{ user.username }}"> -->
     <label>first name</label>
-        <input type="text" name="first_name" value="{{ user.first_name }}">
+        <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
     <label>last name</label>
-        <input type="text" name="last_name" value="{{ user.last_name }}">
+        <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
     <label>age</label>
-        <input type="text" name="age" value="{{ user.age }}">
+        <input type="text" name="age" class="form-control" value="{{ user.age }}">
     <label>gender</label>
-        <select id="gender" name="gender" value="{{ user.gender }}">
+        <select id="gender" name="gender" class="form-control" value="{{ user.gender }}">
           {% if user.gender == 0 %}
           <option value = 0 selected>male</option>
           <option value = 1>female</option>
@@ -38,11 +38,12 @@
           {% endif %}
         </select>
     <label>zipcode</label>
-        <input type="text" name="zipcode" placeholder="{{ user.zipcode }}">
+        <input type="text" name="zipcode" class="form-control" placeholder="{{ user.zipcode }}">
         <br>
     <input type="submit" id="submit_input" name="submit" class="btn btn-primary">
-</form>
-</div>
+    </form>
+    </div>
+
         
 
     {% else %}
