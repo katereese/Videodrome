@@ -12,8 +12,8 @@
   {% if movies %}
  	<table class="table" style="width:100%">
     <tr>
-      <th>MOVIES</th>
-      <th>PLOT</th>
+      <th>Movies</th>
+      <th>Plot</th>
     </tr>
     <tr>
       {% for movie in movies %}
@@ -40,8 +40,10 @@
       <ul class="movie_listing">
         {% for i, rating in media %}
           <li>
-            <a href="/movie_prof?id={{ i.id }}">{{ i.title }} ({{ i.year }})</a>
-            <span class="avg_rating">{{ rating }}</span>
+            <img src="{{ i.small_poster() }}" align="left" class="smallposter">
+            <a href="/movie_prof?id={{ i.id }}"><font size="3">{{ i.title }} ({{ i.year }})</font></a>
+            <br>
+           
             {% if i.shortPlot %}<span class="plot">{{ i.shortPlot|e }}</span>{% endif %}
             <form action="/add_rating" METHOD="POST">
               <input type="hidden" name="id" value="{{ i.id }}">
@@ -51,9 +53,13 @@
               <input type="radio" name="rating" value="3">
               <input type="radio" name="rating" value="4">
               <input type="radio" name="rating" value="5">
-              <input type="submit" value="Rate now">
+              <input type="submit" value="Rate" class="btn btn-default btn-xs">
+              <input type="submit" name="not_interested" value="Not Interested" class="btn btn-default btn-xs">
+              <span class="avg_rating" margin-left="5px"><b>Average Rating:</b> {{ rating }}</span>
             </form>
+
           </li>
+          <br>
         {% endfor %}
       </ul>
     {% endif %}
@@ -67,7 +73,11 @@
         <ul class="movie_listing">
           {% for movie in movies %}
           <li>
-            <a href="/movie_prof?id={{ movie.id }}">{{ movie.title|e }} ({{ movie.year }})</a>
+            {% if movie.poster %}
+            <img src="{{ movie.small_poster() }}" align="left" class="smallposter">
+            {% endif %}
+            <a href="/movie_prof?id={{ movie.id }}"><font size="3">{{ movie.title|e }} ({{ movie.year }})</font></a>
+            <br>
             {% if movie.shortPlot %}<span class="plot">{{ movie.shortPlot|e }}</span>{% endif %}
             <form action="/add_rating" METHOD="POST">
               <input type="hidden" name="id" value="{{ movie.id }}">
@@ -77,8 +87,10 @@
               <input type="radio" name="rating" value="3">
               <input type="radio" name="rating" value="4">
               <input type="radio" name="rating" value="5">
-              <input type="submit" value="Rate now" class="btn btn-default btn-sm">
+              <input type="submit" value="Rate" class="btn btn-default btn-xs">
+              <input type="submit" name="not_interested" value="Not Interested" class="btn btn-default btn-xs">
             </form>
+            <br>
           </li>
           {% endfor %}
         </ul>

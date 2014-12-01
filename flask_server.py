@@ -80,6 +80,27 @@ def sign_up_form():
 			session["user"] = created_user
 			return redirect("/pick_genres")
 
+@app.route("/update_prof", methods=["POST"])
+def update_prof():
+	# gets the current user
+	user = get_current_user()
+	# gets the current user fields
+	first_name = request.form.get("first_name")
+	last_name = request.form.get("last_name")
+	gender = int(request.form.get("gender"))
+	age = int(request.form.get("age"))
+	zipcode = request.form.get("zipcode")
+	# update the fields
+	user.first_name = first_name
+	user.last_name = last_name
+	user.gender = gender
+	user.age = age
+	user.zipcode = zipcode
+	
+	dbsession.add(user)
+	dbsession.commit()
+	return redirect ("/my_profile")
+
 def get_current_user():
 	if 'user' in session:
 		return dbsession.query(User).\
@@ -178,10 +199,10 @@ def movie_search():
 
 	if title:
 		# first try to find exact matches
-		movies = dbsession.query(Media).filter(Media.title == title).filter(Media.omdbLoad != None).all()
+		movies = dbsession.query(Media).filter(Media.title == title).filter(Media.omdbLoad != None).filter(Media.shortPlot != None).all()
 		# fall back on matching parts of the string
 		# if not movies:
-		movies2 = dbsession.query(Media).filter(Media.title.contains(title)).filter(Media.omdbLoad != None).all()
+		movies2 = dbsession.query(Media).filter(Media.title.contains(title)).filter(Media.omdbLoad != None).filter(Media.shortPlot != None).all()
 		fixtitle(movies)
 		fixtitle(movies2)
 
@@ -189,6 +210,8 @@ def movie_search():
 
 @app.route("/wall")
 def user_wall():
+	follows_media = None
+
 	## lists Friends recommendations
 	if "user" in session:
 		# joins logged in user and the follows relationship
@@ -206,6 +229,7 @@ def user_wall():
 		follows_media = dbsession.query(Media,
 			label('avg_rating', func.avg(Rating.rating))).\
 			join(Rating).\
+			filter(Rating.rating != 0).\
 			join(User).\
 			filter(User.id.in_ (followed_ids)).\
 			reset_joinpoint().\
@@ -250,6 +274,7 @@ def user_wall():
 					.all()
 				# unicode fix
 				fixtitle(media)
+
 				# assigns each genre item as key to (list of movies) value
 				genre_dict[i] = media
 			# set the generated media inside cache for the next time
@@ -262,7 +287,7 @@ def user_wall():
 	return render_template("wall.html", genres = genre_dict, media=follows_media)
 
 def base_media_query():
-	print "I'm querying all the darn movies again.."
+	print "I'm querying all the movies.."
 	# sorts movies by higest tomato meter, then highest imdb rating ---- want to filter by already rated
 	return dbsession.query(Media).order_by(desc('tomatoMeter')).order_by(desc('imdbRating'))
 
@@ -298,7 +323,7 @@ def movie_profile():
 	if movie_info.plot:
 		movie_info.plot = movie_info.plot.decode('utf-8', 'ignore')
 
-	ratings = dbsession.query(Rating).options(joinedload('user')).filter_by(movie_id = id).all()
+	ratings = dbsession.query(Rating).filter(Rating.rating !=0).options(joinedload('user')).filter_by(movie_id = id).all()
 	avg_rating = average_rating(ratings)
 
 	# get rating of currently logged in user
@@ -316,12 +341,20 @@ def add_rating():
 	movie_id = int(request.form.get("id"))
 	movie_from_wall = request.form.get("rating_from_wall")
 	user_id = int(session["user"].id)
-	score = int(request.form.get("rating"))
-	review = request.form.get("movie_review")
+	not_interested = request.form.get("not_interested")
+	rating = dbsession.query(Rating).filter_by(user_id = user_id, movie_id=movie_id).first()
+	
+	if not_interested:
+		# add new 0 rating
+		score = 0
+		review = ""
+	else:
+		score = int(request.form.get("rating"))
+		review = request.form.get("movie_review")
+
 	if not review:
 		review = ""
 
-	rating = dbsession.query(Rating).filter_by(user_id = user_id, movie_id=movie_id).first()
 	if not rating:
 		# add new rating
 		rating = Rating(movie_id = movie_id, user_id = user_id, rating = score, review = review)
@@ -402,7 +435,6 @@ def fixtitle(movies):
 		movie.title = movie.title.decode('utf-8', 'ignore')
 		if movie.shortPlot:
 			movie.shortPlot = movie.shortPlot.decode('utf-8', 'ignore')
-
 
 
 # gets the movie prof by calling OMDB API

@@ -58,6 +58,8 @@ nav a:hover { color: #fff; }
   text-align: center;
 }
 
+.smallposter { margin-right: 10px; }
+
 form.rating h2 { margin: 0; font-size: 1.5em;}
 form.rating textarea { width: 100%;}
 form.rating h3 { font-weight: normal; font-size: 1.2em; margin: 0.5em 0 0 0;}
@@ -103,8 +105,12 @@ form#signup input {border-radius: 5px;
 
 .movie_listing li { list-style: none;
                     padding-bottom: 0.5em;
+                    clear: both;
 }
-.movie_listing { max-width: 90%;
+.movie_listing { max-width: 90%; padding: 0;
+}
+.avg_rating { margin-right: 1em;
+
 }
 /*input {
   position:absolute;

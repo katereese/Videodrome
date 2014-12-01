@@ -42,7 +42,7 @@
     </div>
     {% endif %}
 
-    {% if movie.tomatoMeter or movie.tomatoUserMeter %}
+    {% if movie.tomatoMeter or movie.tomatoUserMeter or movie.tomatoUserRating %}
     <div class="rottenTomatoes">
       <h4>Rotten Tomatoes</h4>
       <ul>
@@ -87,8 +87,16 @@
           <textarea name="movie_review" rows="3"
           cols="25">{% if current_user_rating %}{{ current_user_rating.review }}{% endif %}</textarea>
         </div>
-        <input type="submit">
+        <input type="submit" class="btn btn-default btn-sm">
+        <br>
+        
       </form>
+      <br>
+      <form action="/add_rating" METHOD="POST">
+        <input type="hidden" name="id" value="{{ movie.id }}">
+        <input type="submit" name="not_interested" value="Not Interested" class="btn btn-primary">
+      </form>
+
 
 <div class="rating2">
 <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>

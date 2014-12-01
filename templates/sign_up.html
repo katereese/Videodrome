@@ -8,21 +8,21 @@
         <h3> Hi {{ user.username }}! Update your profile below.</h4>
 
     <div class="container">
-    <form method='POST' action="/sign_up" id="signup">
-    <label>email</label>
-        <input type="text" name="email" placeholder="{{ user.email }}">
+    <form method='POST' action="/update_prof" id="signup">
+  <!--   <label>email</label>
+        <input type="text" name="email" value="{{ user.email }}"> -->
  <!--    <label>password</label>
         <input type="password" name="password" placeholder="{{ user.password }}"> -->
-    <label>username</label>
-        <input type="text" name="username" placeholder="{{ user.username }}">
-    <label>first_name</label>
-        <input type="text" name="first_name" placeholder="{{ user.first_name }}">
-    <label>last_name</label>
-        <input type="text" name="last_name" placeholder="{{ user.last_name }}">
+  <!--   <label>username</label>
+        <input type="text" name="username" value="{{ user.username }}"> -->
+    <label>first name</label>
+        <input type="text" name="first_name" value="{{ user.first_name }}">
+    <label>last name</label>
+        <input type="text" name="last_name" value="{{ user.last_name }}">
     <label>age</label>
-        <input type="text" name="age" placeholder="{{ user.age }}">
+        <input type="text" name="age" value="{{ user.age }}">
     <label>gender</label>
-        <select id="gender" name="{{ user.gender }}">
+        <select id="gender" name="gender" value="{{ user.gender }}">
           {% if user.gender == 0 %}
           <option value = 0 selected>male</option>
           <option value = 1>female</option>

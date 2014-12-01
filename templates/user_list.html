@@ -2,53 +2,16 @@
 {% block body %}
 
 <title>User Search</title>
+
+<div class="col-xs-4">
 	<form action="/user_search" method="GET">
     	<h2>Search for a User</h2>
-        <input type="text" name="email" placeholder="email">
-        <button class="" type="submit">Search</button>
+        <input type="text" name="email" placeholder="email" class="form-control">
+        <br>
+        <br>
+        <button class="btn btn-primary" type="submit">Search</button>
 	</form>
-<style>
-table, th, td {
-    border: 0;
-}
-</style>
-</head>
-<body>
-<!-- 
-<table style="width:50%" class="table">
-  <col align="left">
-  <col align="left">
-  <col align="right">
-  <tr>
-    <th>User</th>
-    <th>Age</th>
-    <th>Ratings</th>
-    <th>Average</th>
-  </tr>
-  
-
-  {% for user in users %}
-  <tr>
-    <td><a href="/user_profile?id={{ user.id }}">{{ user.email }}</a></td>
-    <td>{{ user.age }}</td>
-    <td>{{ user.ratings|length }} </td>
-  </tr>
-  {% endfor %}
-  </tr>
-</table>
- 
-<h3>Followed users</h3>
-  <ul>
-    {% for followee in user.follows %}
-    <li><a href="/user_profile?id={{ followee.id }}">{{ followee.username }}</a></li>
-    {% endfor %}
-  </ul>
-<h3>Followers</h3>
-  <ul>
-    {% for follower in user.followers %}
-    <li><a href="/user_profile?id={{ follower.id }}">{{ follower.username }}</a></li>
-    {% endfor %}
-  </ul> -->
+</div>
 
 
 {%endblock%}

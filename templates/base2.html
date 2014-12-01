@@ -36,7 +36,7 @@
           {% if session.get("login", False) %}
         <div class="navgroup" id="navloggedin"><!-- post log in menu -->
           <ul>
-            <li><a href="/my_profile">Hi there, {{ session["user"].username }}</a></li>
+            <li><a href="/my_profile">Hi {{ session["user"].username }}</a></li>
             <li><a href="/logout">Log out</a></li>
           </ul>
         </div>
@@ -53,10 +53,10 @@
         {% if session.get("login", False) %}
         <div id="subnav">
           <ul>
-            <li><a href="/user_list">FRIENDS</a></li>
-            <li><a href="/wall">MOVIES</a></li>
-            <li><a href="/my_profile">PROFILE</a></li>
-            <li><a href="/pick_genres">GENRES</a></li> 
+            <li><a href="/user_list">users </a> /</li>
+            <li><a href="/wall">movies </a> /</li>
+            <li><a href="/my_profile">profile </a> /</li>
+            <li><a href="/pick_genres">genres</a></li> 
           </ul>
         </div>
         {% endif %}
