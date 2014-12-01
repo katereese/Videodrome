@@ -13,43 +13,48 @@
             <h4>Age: {{ user.age }}</h4>
             <h4>Number of Ratings: {{ ratings|length }}</h4>
             <a href="/sign_up"><button>Update Profile</button></a>
- 
       </div>
   <br>
-  <br>      
+  <br>  
         <div class="span2">
+          {% if ratings %}
           <div>
              <h3>Your ratings</h3>
                 <table class="table" style="width:100%">
-                <tr>
-                  <th>MOVIE</th>
-                  <th>RATING</th>
-                  <th>REVIEW</th>
-                  <th> </th>
-
-                </tr>
-                <tr>
-                  {% for rating in ratings %}  
-                  <td><SPAN> {{ rating.movie.title }} </SPAN></td>
-                  <td><SPAN> {{ rating.rating }} </SPAN></td>  
-                  <td><SPAN> {{ rating.review }} </SPAN></td>
-                  <td><SPAN><a class="btn btn-primary btn" href="/movie_prof?id={{ rating.movie_id }}" role="button">Update &raquo;</a>
-                </tr>
+                  <tr>
+                    <th>MOVIE</th>
+                    <th>RATING</th>
+                    <th>REVIEW</th>
+                    <th> </th>
+                  </tr>
+                  <tr>
+                    {% for rating in ratings %}  
+                    <td><SPAN> {{ rating.movie.title }} {{ rating.movie.year }} </SPAN></td>
+                    <td><SPAN> {{ rating.rating }} </SPAN></td>  
+                    <td><SPAN> {{ rating.review }} </SPAN></td>
+                    <td><SPAN><a class="btn btn-default btn" href="/movie_prof?id={{ rating.movie_id }}" role="button">Update rating &raquo;</a>
+                  </tr>
                   {% endfor %}
                 </table>
-                <h3>Followed users</h3>
+          {% endif %}
+
+          {% if user.follows %}
+              <h3>Followed users</h3>
               <ul>
                 {% for followee in user.follows %}
                   <li><a href="/user_profile?id={{ followee.id }}">{{ followee.username }}</a></li>
                 {% endfor %}
               </ul>
+          {% endif %}
 
+          {% if user.followers %}
               <h3>Followers</h3>
               <ul>
                 {% for follower in user.followers %}
                   <li><a href="/user_profile?id={{ follower.id }}">{{ follower.username }}</a></li>
                 {% endfor %}
               </ul>
+          {% endif %}
           </div>
         </div>
   </div>

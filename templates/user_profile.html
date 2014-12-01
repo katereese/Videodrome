@@ -4,9 +4,9 @@
 <div class="container-fluid well span6">
   <div class="row-fluid">
         <div class="span2">
-            <h3><img src="https://cdn1.iconfinder.com/data/icons/round-black-icons-2/78/user-512.png" class="img-circle" width="60" height="60">Profile details for {{user.username}}</h3>
+            <h3><img src="https://cdn1.iconfinder.com/data/icons/round-black-icons-2/78/user-512.png" class="img-circle" width="60" height="60"> Profile details for {{user.username}}</h3>
             <br>
-            <h4>Full Name: {{ user.first_name }} {{ user.last_name }}</h4>
+            <h4>Full Name: {{ user.first_name }} {{ user.last_name }} </h4>
             <h4>Email: {{ user.email }}</h4>
             <h4>Age: {{ user.age }}</h4>
             <h4>Number of Ratings: {{ ratings|length }}</h4>
@@ -31,12 +31,16 @@
     </tr>
     {% endfor %}
     </table>
-    
-    { if followee }
-    <form action="/follow_user" method="post">
-    <input name="followee_id" type="hidden" value="{{ user.id }}">
-    <td><button type="submit">Follow user</button></td>
-    </form>
+    {% if 'user' in session %}
+      {% if user not in current_user.follows %}
+        <form action="/follow_user" method="post">
+        <input name="followee_id" type="hidden" value="{{ user.id }}">
+        <td><button type="submit">Follow user</button></td>
+        </form>
+      {% else %}
+        <p><i>You are following {{ user.username }}.</i></p>
+      {% endif %}
+    {% endif %}
 
 </div>      
 

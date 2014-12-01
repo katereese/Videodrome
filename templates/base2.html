@@ -26,7 +26,7 @@
           <a href="/">Videodrome</a>
         </div>
         <div id="navsearch"><!-- search box -->
-          <form role="search" action="/wall" method="GET">
+          <form role="search" action="/movie_search" method="GET">
               <input type="text" placeholder="Search movies" name="title" id="navsearchinput">
               <a href="#" id="navsearchbtn"><span
           class="glyphicon glyphicon-search"></span></a>
@@ -36,7 +36,7 @@
           {% if session.get("login", False) %}
         <div class="navgroup" id="navloggedin"><!-- post log in menu -->
           <ul>
-            <li><a href="/my_profile?id={{ session["login"] }}">Hi there, {{ session["user"].username }}</a></li>
+            <li><a href="/my_profile">Hi there, {{ session["user"].username }}</a></li>
             <li><a href="/logout">Log out</a></li>
           </ul>
         </div>

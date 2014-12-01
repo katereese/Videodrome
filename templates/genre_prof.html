@@ -2,9 +2,12 @@
 {% block body %}
 <div class="container">
 	<h1>{{ genre.genre }}</h1>
-	<ul>
+	<ul class="movie_listing">
 		{% for movie in media %}
-			<li><a href="/movie_prof?id={{ movie.id }}">{{ movie.title }} ({{ movie.year }})</a></li>
+			<li><a href="/movie_prof?id={{ movie.id }}">{{ movie.title }} ({{ movie.year }})</a>
+			{{ movie.shortPlot }}
+
+			</li>
 		{% endfor %}
 	</ul>
 </div>

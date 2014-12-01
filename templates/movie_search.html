@@ -1,0 +1,37 @@
+{% extends 'base2.html' %}
+{% block body %}
+
+<title>Wall</title>
+<div class="container">
+	<form action="/movie_search" method="GET">
+		<h2>Search for a Movie</h2>
+        <input type="text" name="title" placeholder="Movie" value="{{ request.args.get('title')|e }}">
+        <button type="submit">Search</button>
+ 	</form>
+
+  {% if movies or movies2 %}
+ 	<table class="table" style="width:100%">
+    <tr>
+      <th>MOVIES</th>
+      <th>PLOT</th>
+    </tr>
+    <tr>
+      {% for movie in movies %}
+      <td><a href="/movie_prof?id={{ movie.id }}">{{ movie.title }} ({{ movie.year }})</a></td>
+      <td>{% if movie.shortPlot %}{{ movie.shortPlot }}{% endif %}</td>
+    </tr>
+      {% endfor %}
+      {% for movie in movies2 %}
+        {% if movie not in movies %}
+          <tr>
+            <td><a href="/movie_prof?id={{ movie.id }}">{{ movie.title }} ({{ movie.year }})</a></td>
+            <td>{% if movie.shortPlot %}{{ movie.shortPlot }}{% endif %}</td>
+          </tr>
+        {% endif %}
+      {% endfor %}
+  </table>
+  {% endif %}
+
+</div>
+
+{% endblock %}

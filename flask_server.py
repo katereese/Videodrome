@@ -142,11 +142,15 @@ def user_search():
 @app.route("/user_profile", methods=["GET"])
 def user_profile():
 	id = int(request.args.get("id"))
+	current_user = None
+	if 'user' in session:
+		current_user = dbsession.query(User).options(joinedload('follows')).get(session['user'].id)
+
 	user_info = dbsession.query(User).filter_by(id=id).first()
 	ratings = dbsession.query(Rating).options(joinedload('movie')).filter_by(user_id = user_info.id).all()
 
 	avg_rating = average_rating(ratings)
-	return render_template("user_profile.html", user=user_info, ratings=ratings, avg_rating=avg_rating)
+	return render_template("user_profile.html", user=user_info, ratings=ratings, avg_rating=avg_rating, current_user=current_user)
 
 @app.route("/follow_user", methods=["POST"])
 def follow_user():
@@ -165,45 +169,51 @@ def follow_user():
 	dbsession.commit()
 	return redirect("/my_profile")
 
-@app.route("/wall")
-def user_wall():
+@app.route("/movie_search")
+def movie_search():
 	## movie search
 	title = request.args.get("title")
 	movies = None
+	movies2 = None
+
 	if title:
 		# first try to find exact matches
-		movies = dbsession.query(Media).filter_by(title = title).all()
+		movies = dbsession.query(Media).filter(Media.title == title).filter(Media.omdbLoad != None).all()
 		# fall back on matching parts of the string
-		if not movies:
-			movies = dbsession.query(Media).filter(Media.title.contains(title)).all()
+		# if not movies:
+		movies2 = dbsession.query(Media).filter(Media.title.contains(title)).filter(Media.omdbLoad != None).all()
 		fixtitle(movies)
+		fixtitle(movies2)
 
+	return render_template("movie_search.html", movies=movies, movies2=movies2)
+
+@app.route("/wall")
+def user_wall():
 	## lists Friends recommendations
-
-	#
-	# select media.* FROM media
-	#    JOIN ratings ON media.id = ratings.movie_id 
-    #    JOIN user_follows_assoc ON user_follows_assoc.follow_id = ratings.user_id AND user_follows_assoc.user_id = $USER_ID;
-	#
-
-
 	if "user" in session:
 		# joins logged in user and the follows relationship
 		user = dbsession.query(User).options(joinedload('follows')).filter_by(id = session["user"].id).first()
-
 		# extract user id:s of people the user is following
 		followed_ids = []
 		for u in user.follows:
 			followed_ids.append(u.id)
 
-		# query each followed user and their rated movies
+		# queries for movies that have been rated by people the user follows
+		# but not the user itself.
+		#
+		# 'reset_joinpoint().outerjoin(...).filter()' filters out the user's own
+		# ratings.
 		follows_media = dbsession.query(Media,
 			label('avg_rating', func.avg(Rating.rating))).\
 			join(Rating).\
 			join(User).\
 			filter(User.id.in_ (followed_ids)).\
+			reset_joinpoint().\
+			outerjoin(Rating, and_(Rating.movie_id == Media.id, Rating.user_id == user.id), aliased = True).\
+			filter(Rating.movie_id == None).\
 			group_by(Media.id).\
-			all()
+			order_by(desc('avg_rating')).\
+			limit(20)
 
 	## lists Videodrome recommendations
 	genre_dict = {}
@@ -240,7 +250,6 @@ def user_wall():
 					.all()
 				# unicode fix
 				fixtitle(media)
-				
 				# assigns each genre item as key to (list of movies) value
 				genre_dict[i] = media
 			# set the generated media inside cache for the next time
@@ -250,16 +259,151 @@ def user_wall():
 			print "\n\nFound in cache!\n\n"
 			genre_dict = genre_dict_from_cache
 
-	return render_template("wall.html", movies=movies, genres = genre_dict, media=follows_media)
-
-### need to query movies follower have rated, sorting in descending order
-### dbsession.query(Media).filter_by(user_id=follow_id).outerjoin(Rating, Rating.movie.id==Media.id) order_by(desc('__________'))
-### need to pass multiple conditionals on the outerjoin where user_id=??
+	return render_template("wall.html", genres = genre_dict, media=follows_media)
 
 def base_media_query():
 	print "I'm querying all the darn movies again.."
 	# sorts movies by higest tomato meter, then highest imdb rating ---- want to filter by already rated
 	return dbsession.query(Media).order_by(desc('tomatoMeter')).order_by(desc('imdbRating'))
+
+@app.route("/genre_prof", methods=["GET"])
+def genre_profile():
+	id = int(request.args.get("id"))
+	if not id:
+		return redirect("/wall")
+	genre = dbsession.query(Genre).get(id)
+	media = base_media_query().join(genres).filter_by(genre_id=id).limit(100).all()
+	fixtitle(media)
+	
+	return render_template("genre_prof.html", media = media, genre = genre)
+
+@app.route("/movie_prof", methods=["GET"])
+def movie_profile():
+	user = get_current_user()
+	id = request.args.get("id")
+	if not id:
+		return redirect("/wall")
+
+	movie_info = dbsession.query(Media).options(joinedload('genres')).get(id)
+	if not movie_info:
+		# movie wasn't found
+		flash("This movie does not exist. Please try again.")
+		return redirect("/wall")
+
+	# FIXME: fix this workaround for utf-8 decoding weirdness in flask/jinja
+	if movie_info.director:
+		movie_info.director = movie_info.director.decode('utf-8', 'ignore')
+	if movie_info.actors:
+		movie_info.actors = movie_info.actors.decode('utf-8', 'ignore')
+	if movie_info.plot:
+		movie_info.plot = movie_info.plot.decode('utf-8', 'ignore')
+
+	ratings = dbsession.query(Rating).options(joinedload('user')).filter_by(movie_id = id).all()
+	avg_rating = average_rating(ratings)
+
+	# get rating of currently logged in user
+	current_user_rating = None
+	for rating in ratings:
+		if rating.user == user:
+			current_user_rating = rating
+			break
+
+	return render_template("movie_prof.html", movie=movie_info, ratings=ratings, avg_rating = avg_rating, user=user, current_user_rating = current_user_rating)
+
+@app.route("/add_rating", methods=["POST"])
+def add_rating():
+	#get movie from search in movie_prof.html
+	movie_id = int(request.form.get("id"))
+	movie_from_wall = request.form.get("rating_from_wall")
+	user_id = int(session["user"].id)
+	score = int(request.form.get("rating"))
+	review = request.form.get("movie_review")
+	if not review:
+		review = ""
+
+	rating = dbsession.query(Rating).filter_by(user_id = user_id, movie_id=movie_id).first()
+	if not rating:
+		# add new rating
+		rating = Rating(movie_id = movie_id, user_id = user_id, rating = score, review = review)
+	else:
+		# update existing rating
+		rating.rating = score
+		rating.review = review
+
+	dbsession.add(rating)
+	dbsession.commit()
+	clear_user_cache()
+
+	## flash message that it's been added?
+	if movie_from_wall:
+		return redirect("/wall")
+	else:
+		return redirect("/movie_prof?id=%d" % movie_id)
+
+def clear_user_cache():
+	cache.set(session["user"].id, None, timeout=0)
+
+@app.route("/movie_list")
+def movie_list():
+	movie_list = dbsession.query(Media).limit(20).all()
+	return render_template("movie_list.html", movies=movie_list)
+
+def average_rating(ratings):
+	if len(ratings) == 0:
+		return 0.0
+	sum = 0
+	for r in ratings:
+		sum = sum + r.rating
+	return float("{0:.1f}".format(float(sum) / len(ratings)))
+
+@app.route("/pick_genres")
+def pick_genres():
+	# get a list of all genres
+	genres = dbsession.query(Genre).all()
+	# load current user and all her/his/it genre selections
+	user = get_current_user()
+
+	return render_template("pick_genres.html", genres=genres, user=user)
+
+@app.route("/post_genres", methods=["POST"])
+def post_genres():
+	# get logged in user and user genre picks from pick_genres.html
+	user_obj = get_current_user()
+	genre_ids = [int(gi) for gi in request.form.getlist('genres')]
+
+	# modifying the collection that we're itering over is no bueno
+	genres_in_db = dbsession.query(Genre).all()
+	for g in genres_in_db:
+		if g in user_obj.genres:
+			user_obj.genres.remove(g)
+	try:
+		print "Committing..\n\n"
+		dbsession.commit()
+	except:
+		print "\n\n\nRolling back uh oh\n\n\n"
+		dbsession.rollback()
+
+	for gi in genre_ids:
+		genre_obj = dbsession.query(Genre).filter_by(id=gi).first()
+		user_obj.genres.append(genre_obj)
+	try:
+		dbsession.commit()
+		cache.set(session["user"].id, None, timeout=0)
+	except:
+		dbsession.rollback()
+	return redirect("/wall")
+
+# filter out junk characters that break decoding with this error:
+# UnicodeDecodeError: 'utf8' codec can't decode byte 0xa2 in position 43: invalid start byte
+def fixtitle(movies):
+	if movies==None:
+		return
+	for movie in movies:
+		movie.title = movie.title.decode('utf-8', 'ignore')
+		if movie.shortPlot:
+			movie.shortPlot = movie.shortPlot.decode('utf-8', 'ignore')
+
+
 
 # gets the movie prof by calling OMDB API
 @app.route("/movie_prof_API", methods=["GET", "POST"])
@@ -288,7 +432,10 @@ def import_from_OMDB():
 def populate_movie_from_OMDB(movie_info):
 	# query API for move title using OMDB API parameters
 	# Exception Handler: do this where you expect a failure
-	res = omdb.request(t=urllib.quote_plus(movie_info.title), y=movie_info.year, r='JSON', apikey="e5b6d27b", tomatoes="true")
+	title = movie_info.title #urllib.quote_plus(movie_info.title)
+	res = omdb.request(t=title, y=movie_info.year, r='JSON', apikey="e5b6d27b", tomatoes="true")
+	print "fetching [%s]" % title
+ 
 	try:
 		json_content = json.loads(res.content)
 	# do this if failure
@@ -346,181 +493,6 @@ def check_api_result(json_content, field):
 		return json_content[field]
 	else:
 		return None
-
-@app.route("/genre_prof", methods=["GET"])
-def genre_profile():
-	id = int(request.args.get("id"))
-	if not id:
-		return redirect("/wall")
-	genre = dbsession.query(Genre).get(id)
-	media = base_media_query().join(genres).filter_by(genre_id=id).limit(100).all()
-	fixtitle(media)
-	
-
-	return render_template("genre_prof.html", media = media, genre = genre)
-
-@app.route("/movie_prof", methods=["GET"])
-def movie_profile():
-	id = request.args.get("id")
-	if not id:
-		return redirect("/wall")
-
-	movie_info = dbsession.query(Media).get(id)
-	if not movie_info:
-		# movie wasn't found
-		flash("This movie does not exist. Please try again.")
-		return redirect("/wall")
-
-	# FIXME: fix this workaround for utf-8 decoding weirdness in flask/jinja
-	if movie_info.director:
-		movie_info.director = movie_info.director.decode('utf-8', 'ignore')
-	if movie_info.actors:
-		movie_info.actors = movie_info.actors.decode('utf-8', 'ignore')
-	if movie_info.plot:
-		movie_info.plot = movie_info.plot.decode('utf-8', 'ignore')
-
-	ratings = dbsession.query(Rating).options(joinedload('user')).filter_by(movie_id = id).all()
-	avg_rating = average_rating(ratings)
-
-	return render_template("movie_prof.html", movie=movie_info, ratings=ratings, avg_rating = avg_rating)
-
-@app.route("/add_rating", methods=["POST"])
-def add_rating():
-	#get movie from search in movie_prof.html
-	movie_id = int(request.form.get("id"))
-	movie_from_wall = request.form.get("rating_from_wall")
-	user_id = int(session["user"].id)
-	score = int(request.form.get("rating"))
-	review = request.form.get("movie_review")
-	print review
-
-	rating = dbsession.query(Rating).filter_by(user_id = user_id, movie_id=movie_id).first()
-	if not rating:
-		# add new rating
-		rating = Rating(movie_id = movie_id, user_id = user_id, rating = score, review = review)
-	else:
-		# update existing rating
-		rating.rating = score
-		rating.review = review
-
-	dbsession.add(rating)
-	dbsession.commit()
-	clear_user_cache()
-
-	## flash message that it's been added?
-	if movie_from_wall:
-		return redirect("/wall")
-	else:
-		return redirect("/movie_prof?id=%d" % movie_id)
-
-def clear_user_cache():
-	cache.set(session["user"].id, None, timeout=0)
-
-@app.route("/movie_list")
-def movie_list():
-	movie_list = dbsession.query(Media).limit(20).all()
-	return render_template("movie_list.html", movies=movie_list)
-
-def average_rating(ratings):
-	if len(ratings) == 0:
-		return 0.0
-
-	sum = 0
-	for r in ratings:
-		sum = sum + r.rating
-	return float("{0:.1f}".format(float(sum) / len(ratings)))
-
-@app.route("/pick_genres")
-def pick_genres():
-	# get a list of all genres
-	genres = dbsession.query(Genre).all()
-	# Load current user and all her/his/it genre selections
-	user = get_current_user()
-	
-	# create a dictionary with each genre as key and movie list as an array of values
-	#movie_dict = collections.OrderedDict()
-	#media_base = base_media_query()
-	#for i in genre_list:
-	#	temp_media = media_base
-	#	media = temp_media.join(genres).filter_by(genre_id=i.id).limit(5).all()
-	#	fixtitle(media)
-	#	movie_dict[i] = media
-
-	return render_template("pick_genres.html", genres=genres, user=user)
-
-@app.route("/post_genres", methods=["POST"])
-def post_genres():
-	# get logged in user and user genre picks from pick_genres.html
-	user_obj = get_current_user()
-	genre_ids = [int(gi) for gi in request.form.getlist('genres')]
-
-	# modifying the collection that we're itering over is no bueno
-	genres_in_db = dbsession.query(Genre).all()
-	for g in genres_in_db:
-		if g in user_obj.genres:
-			user_obj.genres.remove(g)
-
-	try:
-		print "Committing..\n\n"
-		dbsession.commit()
-	except:
-		print "\n\n\nRolling back uh oh\n\n\n"
-		dbsession.rollback()
-
-	# to_remove = []
-	# to_add = []
-	# cache_needs_revalidation = False
-
-	# for g in genres_in_db:
-	# 	if g not in genre_ids:
-	# 		to_remove.append(g)
-
-	# for gi in genre_ids:
-	# 	if gi not in genres_in_db:
-	# 		to_add.append(gi)
-
-	# if len(to_add) > 0 or len(to_remove) > 0:
-	# 	cache_needs_revalidation = True
-
-	# for genre in to_add:
-	# 	user_obj.genres.append(genre)
-	# try:
-	# 	dbsession.commit()
-	# except:
-	# 	dbsession.rollback()
-
-	# for genre in to_remove:
-	# 	user_obj.genres.remove(genre)
-	# try:
-	# 	dbsession.commit()
-	# except:
-	# 	dbsession.rollback()
-
-	# if cache_needs_revalidation:
-	# 	cache.set(session["user"].id, None, timeout=0)
-
-
-	
-	for gi in genre_ids:
-		genre_obj = dbsession.query(Genre).filter_by(id=gi).first()
-		user_obj.genres.append(genre_obj)
-	try:
-		dbsession.commit()
-		cache.set(session["user"].id, None, timeout=0)
-	except:
-		dbsession.rollback()
-	return redirect("/wall")
-
-# filter out junk characters that break decoding with this error:
-# UnicodeDecodeError: 'utf8' codec can't decode byte 0xa2 in position 43: invalid start byte
-def fixtitle(movies):
-	if movies==None:
-		return
-	for movie in movies:
-		movie.title = movie.title.decode('utf-8', 'ignore')
-		if movie.shortPlot:
-			movie.shortPlot = movie.shortPlot.decode('utf-8', 'ignore')
-
 
 if __name__ == '__main__':
 	# starts the built-in web server on port 5000

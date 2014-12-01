@@ -15,6 +15,13 @@
       <li>Running length: {{ movie.runtime }} minutes</li>
       <li>{{ movie.color }}</li>
     </ul>
+    <h4>Genre</h4>
+      <ul class="genre_list">
+        {% for i in movie.genres %}
+        <li><a href="/genre_prof?id={{ i.id }}">{{ i.genre }}</a></li>
+        {% endfor %}
+      </ul>
+
     <h4>Plot</h4>
     <p class="plot">
       {{ movie.plot }}
@@ -50,15 +57,36 @@
       <form action="/add_rating" METHOD="POST" class="rating">
         <h2>Rate this movie now:</h2>
         <input type="hidden" name="id" value="{{ movie.id }}">
-        <span class="ratingbuttons">Rating</span>
-        <input type="radio" name="rating" value="1"><label for="rating1">1</label>
-        <input type="radio" name="rating" value="2"><label for="rating2">2</label>
-        <input type="radio" name="rating" value="3"><label for="rating3">3</label>
-        <input type="radio" name="rating" value="4"><label for="rating4">4</label>
-        <input type="radio" name="rating" value="5"><label for="rating5">5</label>
-
-        <b>Review</b>
-        <textarea name="movie_review" rows="3" cols="25"></textarea>
+        <input type="radio" name="rating" value="1" 
+          {% if current_user_rating and current_user_rating.rating == 1 %}
+              checked
+          {% endif %}>
+          <label for="rating1">1</label>
+        <input type="radio" name="rating" value="2"
+          {% if current_user_rating and current_user_rating.rating == 2 %}
+              checked
+          {% endif %}>
+          <label for="rating2">2</label>
+        <input type="radio" name="rating" value="3"
+          {% if current_user_rating and current_user_rating.rating == 3 %}
+              checked
+          {% endif %}>
+          <label for="rating3">3</label>
+        <input type="radio" name="rating" value="4"
+          {% if current_user_rating and current_user_rating.rating == 4 %}
+              checked
+          {% endif %}>
+          <label for="rating4">4</label>
+        <input type="radio" name="rating" value="5"   
+          {% if current_user_rating and current_user_rating.rating == 5 %}
+              checked
+          {% endif %}>
+          <label for="rating5">5</label>
+        <div class="review">
+          <h3>Review</h3>
+          <textarea name="movie_review" rows="3"
+          cols="25">{% if current_user_rating %}{{ current_user_rating.review }}{% endif %}</textarea>
+        </div>
         <input type="submit">
       </form>
 
@@ -68,19 +96,37 @@
 
   {% endif %} 
 
-<!-- <div class="rating2">
-<form action="/add_rating" METHOD="POST" class="rating">
-        <h2>Rate this movie now:</h2>
-        <input type="hidden" name="id" value="{{ movie.id }}">
-        <span class="ratingbuttons">Rating</span>
-        <input type="radio" name="rating" value="1"><label for="rating1">☆</label>
-        <input type="radio" name="rating" value="2"><label for="rating2">☆</label>
-        <input type="radio" name="rating" value="3"><label for="rating3">☆</label>
-        <input type="radio" name="rating" value="4"><label for="rating4">☆</label>
-        <input type="radio" name="rating" value="5"><label for="rating5">☆</label>
-        <button type="submit">Submit</button>
-      </form>
- -->
+<!-- {% if session["user"] %}
+  <form action="/add_rating" METHOD="POST" class="rating">
+  <h2>Your rating:</h2>
+  <fieldset class="score">
+
+<!--   <span class="ratingbuttons">Rating</span> -->
+    
+    <!-- <input type="hidden" name="id" value="{{ movie.id }}">
+
+    <input type="radio" name="rating" id="score-5" name="score" value="5">
+    <label title="5 stars" for="score-5">5 stars</label>
+    
+    <input type="radio" name="rating" id="score-4" name="score" value="4">
+    <label title="4 stars" for="score-4">4 stars</label>
+    
+    <input type="radio" name="rating" id="score-3" name="score" value="3">
+    <label title="3 stars" for="score-3">3 stars</label>
+    
+    <input type="radio" name="rating" id="score-2" name="score" value="2">
+    <label title="2 stars" for="score-2">2 stars</label>
+    
+    <input type="radio" name="rating" id="score-1" name="score" value="1">
+    <label title="1 stars" for="score-1">1 stars</label>
+  </fieldset>
+    <br>
+    <b>Review</b><br>
+    <textarea name="movie_review" rows="3" cols="25"></textarea><br>    
+    <button type="submit">Submit</button>
+
+  </form>
+{% endif %} -->
 
 {% if ratings %}
 <div>
