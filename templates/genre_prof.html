@@ -4,8 +4,24 @@
 	<h1>{{ genre.genre }}</h1>
 	<ul class="movie_listing">
 		{% for movie in media %}
-			<li><a href="/movie_prof?id={{ movie.id }}">{{ movie.title }} ({{ movie.year }})</a>
-			{{ movie.shortPlot }}
+			{% if movie.poster %}<img src="{{ movie.small_poster() }}" align="left" class="smallposter">{% endif %}
+            <a href="/movie_prof?id={{ movie.id }}"><font size="3">{{ movie.title|e }} ({{ movie.year }})</font></a>
+            <br>
+            {% if movie.shortPlot %}<span class="plot">{{ movie.shortPlot|e }}</span>{% endif %}
+            <form action="/add_rating" METHOD="POST">
+              <input type="hidden" name="id" value="{{ movie.id }}">
+              <input type="hidden" name="rating_from_wall" value="{{ movie.id }}">
+              <input type="radio" name="rating" value="1">
+              <input type="radio" name="rating" value="2">
+              <input type="radio" name="rating" value="3">
+              <input type="radio" name="rating" value="4">
+              <input type="radio" name="rating" value="5">
+              <input type="submit" value="Rate" class="btn btn-default btn-xs">
+              <input type="submit" name="not_interested" value="Not Interested" class="btn btn-default btn-xs">
+              {% if movie.tomatoUserRating %}<span class="wall_rating"><b>Rotten Tomatoes:</b> {{ movie.tomatoUserRating }} / 10</span>{% endif %}
+              {% if movie.imdbRating %}<span class="wall_rating"><b>IMDB:</b> {{ movie.imdbRating }} / 5</span>{% endif %}</span>
+            </form>
+            <br>
 
 			</li>
 		{% endfor %}

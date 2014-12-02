@@ -4,32 +4,58 @@
 <title>Wall</title>
 <div class="container">
 	<form action="/movie_search" method="GET">
-		<h2>Search for a Movie</h2>
+		<h2>Search for Movie</h2>
         <input type="text" name="title" placeholder="Movie" value="{{ request.args.get('title')|e }}">
         <button type="submit">Search</button>
  	</form>
-
+</div>
+<br>
+<div class="container">
   {% if movies or movies2 %}
- 	<table class="table" style="width:100%">
-    <tr>
-      <th>Movie</th>
-      <th>Plot</th>
-    </tr>
-    <tr>
-      {% for movie in movies %}
-      <td><a href="/movie_prof?id={{ movie.id }}">{{ movie.title }} ({{ movie.year }})</a></td>
-      <td>{% if movie.shortPlot %}{{ movie.shortPlot }}{% endif %}</td>
-    </tr>
-      {% endfor %}
-      {% for movie in movies2 %}
-        {% if movie not in movies %}
-          <tr>
-            <td><a href="/movie_prof?id={{ movie.id }}">{{ movie.title }} ({{ movie.year }})</a></td>
-            <td>{% if movie.shortPlot %}{{ movie.shortPlot }}{% endif %}</td>
-          </tr>
-        {% endif %}
-      {% endfor %}
-  </table>
+    {% for movie in movies %}
+        {% if movie.poster %}<img src="{{ movie.small_poster() }}" align="left" class="smallposter">{% endif %}
+            <a href="/movie_prof?id={{ movie.id }}"><font size="3">{{ movie.title|e }} ({{ movie.year }})</font></a>
+            <br>
+            {% if movie.shortPlot %}<span class="plot">{{ movie.shortPlot|e }}</span>{% endif %}
+            <form action="/add_rating" METHOD="POST">
+              <input type="hidden" name="id" value="{{ movie.id }}">
+              <input type="hidden" name="rating_from_wall" value="{{ movie.id }}">
+              <input type="radio" name="rating" value="1">
+              <input type="radio" name="rating" value="2">
+              <input type="radio" name="rating" value="3">
+              <input type="radio" name="rating" value="4">
+              <input type="radio" name="rating" value="5">
+              <input type="submit" value="Rate" class="btn btn-default btn-xs">
+              <input type="submit" name="not_interested" value="Not Interested" class="btn btn-default btn-xs">
+              <span class="wall_rating"><b>Rotten Tomatoes:</b>{% if movie.tomatoUserRating %} {{ movie.tomatoUserRating }} / 10</span>{% endif %}
+              <span class="wall_rating"><b>IMDB:</b>{% if movie.imdbRating %} {{ movie.imdbRating }} / 5</span>{% endif %}</span>
+            </form>
+            <br>
+    {% endfor %}  
+    
+    {% for movie in movies2 %}
+      {% if movie not in movies %}
+          {% if movie.poster %}<img src="{{ movie.small_poster() }}" align="left" class="smallposter">{% endif %}
+            <a href="/movie_prof?id={{ movie.id }}"><font size="3">{{ movie.title|e }} ({{ movie.year }})</font></a>
+            <br>
+            {% if movie.shortPlot %}<span class="plot">{{ movie.shortPlot|e }}</span>{% endif %}
+            <form action="/add_rating" METHOD="POST">
+              <input type="hidden" name="id" value="{{ movie.id }}">
+              <input type="hidden" name="rating_from_wall" value="{{ movie.id }}">
+              <input type="radio" name="rating" value="1">
+              <input type="radio" name="rating" value="2">
+              <input type="radio" name="rating" value="3">
+              <input type="radio" name="rating" value="4">
+              <input type="radio" name="rating" value="5">
+              <input type="submit" value="Rate" class="btn btn-default btn-xs">
+              <input type="submit" name="not_interested" value="Not Interested" class="btn btn-default btn-xs">
+              {% if movie.tomatoUserRating %}<span class="wall_rating"><b>Rotten Tomatoes:</b> {{ movie.tomatoUserRating }} / 10</span>{% endif %}
+              {% if movie.imdbRating %}<span class="wall_rating"><b>IMDB:</b> {{ movie.imdbRating }} / 5</span>{% endif %}</span>
+            </form>
+            <br>
+      {% endif %}
+    {% endfor %}
+<!--   </table> -->
   {% endif %}
 
 </div>

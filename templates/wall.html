@@ -46,7 +46,6 @@
             <img src="{{ i.small_poster() }}" align="left" class="smallposter">
             <a href="/movie_prof?id={{ i.id }}"><font size="3">{{ i.title }} ({{ i.year }})</font></a>
             <br>
-           
             {% if i.shortPlot %}<span class="plot">{{ i.shortPlot|e }}</span>{% endif %}
             <form action="/add_rating" METHOD="POST">
               <input type="hidden" name="id" value="{{ i.id }}">
@@ -94,8 +93,8 @@
               <input type="radio" name="rating" value="5">
               <input type="submit" value="Rate" class="btn btn-default btn-xs">
               <input type="submit" name="not_interested" value="Not Interested" class="btn btn-default btn-xs">
-              <span class="wall_rating"><b>Rotten Tomatoes:</b>{% if movie.tomatoUserRating %} {{ movie.tomatoUserRating }} / 10</span>{% endif %}
-              <span class="wall_rating"><b>IMDB:</b>{% if movie.imdbRating %} {{ movie.imdbRating }} / 5</span>{% endif %}</span>
+              {% if movie.tomatoUserRating %}<span class="wall_rating"><b>Rotten Tomatoes:</b> {{ movie.tomatoUserRating }} / 10</span>{% endif %}
+              {% if movie.imdbRating %}<span class="wall_rating"><b>IMDB:</b> {{ movie.imdbRating }} / 5</span>{% endif %}</span>
             </form>
             <br>
           </li>
@@ -107,6 +106,7 @@
     {% if 'user' in session %}
     <p><a class="btn btn-primary" href="{{ url_for('pick_genres') }}" role="button">Update genres &raquo;</a></p>
     {% else %}
+      <br>
       <p><a href="/sign_up">Sign up now to get recommendations!</a></p>
     {% endif %}
   </div>

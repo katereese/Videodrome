@@ -2,31 +2,26 @@
 {% block body %}
 
 <h2>Pick your favorite genres</h2>
+<br>
+<div class="container-fluid">
+  	<div class="row">
+	   	<form action="/post_genres" METHOD="POST" class="genres">
+			{% for genre in genres %}
+			<div class="col-md-2">
 
-<div class="container">
-
-<table ="table" style="width:100%">
-   	
-   	<form action="/post_genres" METHOD="POST" class="genres">
-	<dl>
-	<!-- iterate over dictionary items with genre as key and list of movies as value -->
-	{% for genre in genres %}
-		<!-- each dict item has a checkbox with genre id as the value to be passed to server -->
-		<!-- if genre is selected/checked print genre name -->
-    	<dt><input type="checkbox" class="checkbox-primary" name="genres" value="{{ genre.id }}"
-    		{% if genre in user.genres %}
-    			checked
-    		{% endif %}>
-    		  {{ genre.genre }}</dt>
-	{% endfor %}
-	</dl>
-
-	<td><button type="submit" class="btn btn-primary">Submit</button></td>
-	</form>
-
-</table>
-
-
+			    <input type="checkbox" class="checkbox-primary" name="genres" value="{{ genre.id }}"
+			    	{% if genre in user.genres %}
+			    		checked
+			    	{% endif %}>
+			    		{{ genre.genre }}
+			</div>
+			{% endfor %}
+	</div>
+	<div class="row">
+				<button type="submit" class="btn btn-primary">Submit</button>
+	</div>
+		</form>
 </div>
+
 
 {% endblock %}
