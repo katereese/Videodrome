@@ -1,8 +1,14 @@
 {% extends 'base2.html' %}
 {% block body %}
 
+<style>
+user_search {
+	padding-top: 4em;
+}
+</style>
 <title>User Search</title>
 
+<div class="container user_search">
 <div class="col-xs-4">
 	<form action="/user_search" method="GET">
     	<h2>Search for a User</h2>
@@ -10,6 +16,7 @@
         <br>
         <button class="btn btn-primary" type="submit">Search</button>
 	</form>
+</div>
 </div>
 
 

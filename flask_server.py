@@ -345,13 +345,15 @@ def add_rating():
 	user_id = int(session["user"].id)
 	not_interested = request.form.get("not_interested")
 	rating = dbsession.query(Rating).filter_by(user_id = user_id, movie_id=movie_id).first()
+	# star_rating = request.form.get("star_rating")
+	print request.form
 	
 	if not_interested:
 		# add new 0 rating
 		score = 0
 		review = ""
 	else:
-		score = int(request.form.get("rating"))
+		score = int(request.form.get("star_rating"))
 		review = request.form.get("movie_review")
 
 	if not review:

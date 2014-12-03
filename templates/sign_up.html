@@ -52,20 +52,20 @@
     <h2>Please create a profile to start rating movies!</h2>
 </div>
 
-<div class="container">
+<div class="col-xs-2">
 <form method='POST' action="/sign_up" id="signup">
     <label>email</label>
-        <input type="text" name="email" placeholder="email">
+        <input type="text" name="email" class="form-control" placeholder="email">
     <label>password</label>
-        <input type="password" name="password" placeholder="password">
+        <input type="password" name="password" class="form-control" placeholder="password">
     <label>username</label>
-        <input type="text" name="username" placeholder="username">
+        <input type="text" name="username" class="form-control" placeholder="username">
     <label>first_name</label>
-        <input type="text" name="first_name" placeholder="first name">
+        <input type="text" name="first_name" class="form-control" placeholder="first name">
     <label>last_name</label>
-        <input type="text" name="last_name" placeholder="last name">
+        <input type="text" name="last_name" class="form-control" placeholder="last name">
     <label>age</label>
-        <input type="text" name="age" placeholder="age">
+        <input type="text" name="age" class="form-control" placeholder="age">
     <label>gender</label>
         <select id="gender" name="gender">
           <option value = 0>male</option>
@@ -73,7 +73,7 @@
           <option value = 2>unspecified</option>
         </select>
     <label>zipcode</label>
-        <input type="text" name="zipcode" placeholder="zipcode">
+        <input type="text" name="zipcode" class="form-control" AJAXplaceholder="zipcode">
         <br>
     <input type="submit" id="submit_input" name="submit" class="btn btn-primary">
 </form>

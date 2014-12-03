@@ -5,8 +5,11 @@
 <br><br>
 <div class="container-fluid well span6">
   <div class="row-fluid">
+  <div class="col-md-4">
       <div class="span2">
-          <h3><img src="https://cdn1.iconfinder.com/data/icons/round-black-icons-2/78/user-512.png" class="img-circle" width="70" height="70"></h3>
+        <div class="profile">
+<!--           <h3><img src="https://cdn1.iconfinder.com/data/icons/round-black-icons-2/78/user-512.png" class="img-circle" width="70" height="70"></h3> -->
+            <h3><img src="http://4.bp.blogspot.com/-u_aDjcZihjw/UXh-quKdpmI/AAAAAAAAGtQ/CLvfw74oB00/s1600/wonderwoman.jpg" class="img-circle" width="110" height="110"></h3>
             <h3>@{{ session["user"].username }}</h3>
             <h4>Full Name: {{ user.first_name }} {{ user.last_name }}</h4>
             <h4>Email: {{ user.email }}</h4>
@@ -17,34 +20,9 @@
             </h4>
             <h4>Number of Ratings: {{ ratings|length }}</h4>
             <a href="/sign_up"><button class="btn btn-primary btn-sm">Update Profile</button></a>
-      </div>
-  <br>
-  <br>  
-      <div class="span2">
-          {% if ratings %}
-          <div>
-             <h3>Ratings</h3>
-                <table class="table table-striped" style="width:100%">
-          <!--         <tr>
-                    <th>Movie</th>
-                    <th>Rating</th>
-                    <th>REVIEW</th>
-                    <th> </th>
-                  </tr> -->
-                  <tr>
-                    {% for rating in ratings %}
-                        {% if rating.rating != 0 %}
-                      <td><SPAN><a href="/movie_prof?id={{ rating.movie_id }}"> {{ rating.movie.title }} ({{ rating.movie.year }})</a> </SPAN></td>
-                      <td><SPAN> {{ rating.rating }} </SPAN></td>  
-                      <td><SPAN> {{ rating.review }} </SPAN></td>
-                      <td><SPAN><a class="btn btn-default btn-sm" href="/movie_prof?id={{ rating.movie_id }}" role="button">Change rating &raquo;</a>
-                  </tr>
-                      {% endif %}
-                    {% endfor %}
-                </table>
-          {% endif %}
 
-          {% if user.follows %}
+        </div>
+             {% if user.follows %}
               <h3>Followed users</h3>
               <ul>
                 {% for followee in user.follows %}
@@ -61,6 +39,38 @@
                 {% endfor %}
               </ul>
           {% endif %}
+      </div>
+    </div>
+  <br>
+  <br>  
+      <div class="span2">
+        <div class="col-md-8">
+
+          {% if ratings %}
+          <div>
+             <h3>My ratings</h3>
+                <table class="table table-striped">
+          <!--         <tr>
+                    <th>Movie</th>
+                    <th>Rating</th>
+                    <th>REVIEW</th>
+                    <th> </th>
+                  </tr> -->
+                  <tr>
+                    {% for rating in ratings %}
+                        {% if rating.rating != 0 %}
+                      <td><SPAN><a href="/movie_prof?id={{ rating.movie_id }}"> {{ rating.movie.title }} ({{ rating.movie.year }})</a> </SPAN></td>
+                      <td><SPAN> {{ rating.rating }} </SPAN></td>  
+                      <td><SPAN> {{ rating.review }} </SPAN></td>
+                      <td><a class="btn btn-default btn-sm" href="/movie_prof?id={{ rating.movie_id }}" role="button"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></td>
+                  </tr>
+                      {% endif %}
+                    {% endfor %}
+                </table>
+          {% endif %}
+          </div>
+
+         
           </div>
         </div>
   </div>

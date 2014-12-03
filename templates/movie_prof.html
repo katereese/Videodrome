@@ -61,32 +61,14 @@
   {% if session["user"] %}
       <form action="/add_rating" METHOD="POST" class="rating">
         <h2>Rate this movie now:</h2>
+        {% if current_user_rating %}
+          {% set user_score = current_user_rating.rating %}
+        {% else %}
+          {% set user_score = 0 %}
+        {% endif %}
         <input type="hidden" name="id" value="{{ movie.id }}">
-        <input type="radio" name="rating" value="1" 
-          {% if current_user_rating and current_user_rating.rating == 1 %}
-              checked
-          {% endif %}>
-          <label for="rating1">1</label>
-        <input type="radio" name="rating" value="2"
-          {% if current_user_rating and current_user_rating.rating == 2 %}
-              checked
-          {% endif %}>
-          <label for="rating2">2</label>
-        <input type="radio" name="rating" value="3"
-          {% if current_user_rating and current_user_rating.rating == 3 %}
-              checked
-          {% endif %}>
-          <label for="rating3">3</label>
-        <input type="radio" name="rating" value="4"
-          {% if current_user_rating and current_user_rating.rating == 4 %}
-              checked
-          {% endif %}>
-          <label for="rating4">4</label>
-        <input type="radio" name="rating" value="5"   
-          {% if current_user_rating and current_user_rating.rating == 5 %}
-              checked
-          {% endif %}>
-          <label for="rating5">5</label>
+        <input id="rating-stars" name="star_rating" value="{{user_score}}" type="number" class="rating" min=0 max=5 step="1.0" data-size="xs" data-show-caption="false">
+
         <div class="review">
           <h3>Review</h3>
           <textarea name="movie_review" rows="3"
@@ -99,47 +81,12 @@
       <br>
       <form action="/add_rating" METHOD="POST">
         <input type="hidden" name="id" value="{{ movie.id }}">
-        <input type="submit" name="not_interested" value="Not Interested" class="btn btn-primary">
+        <input type="submit" name="not_interested" value="Not Interested" class="btn btn-danger">
       </form>
 
 
-<!-- <div class="rating2">
-<span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
-</div> -->
-
   {% endif %} 
 
-<!-- {% if session["user"] %}
-  <form action="/add_rating" METHOD="POST" class="rating">
-  <h2>Your rating:</h2>
-  <fieldset class="score">
-
-<!--   <span class="ratingbuttons">Rating</span> -->
-    
-    <!-- <input type="hidden" name="id" value="{{ movie.id }}">
-
-    <input type="radio" name="rating" id="score-5" name="score" value="5">
-    <label title="5 stars" for="score-5">5 stars</label>
-    
-    <input type="radio" name="rating" id="score-4" name="score" value="4">
-    <label title="4 stars" for="score-4">4 stars</label>
-    
-    <input type="radio" name="rating" id="score-3" name="score" value="3">
-    <label title="3 stars" for="score-3">3 stars</label>
-    
-    <input type="radio" name="rating" id="score-2" name="score" value="2">
-    <label title="2 stars" for="score-2">2 stars</label>
-    
-    <input type="radio" name="rating" id="score-1" name="score" value="1">
-    <label title="1 stars" for="score-1">1 stars</label>
-  </fieldset>
-    <br>
-    <b>Review</b><br>
-    <textarea name="movie_review" rows="3" cols="25"></textarea><br>    
-    <button type="submit">Submit</button>
-
-  </form>
-{% endif %} -->
 
 {% if ratings %}
 <div>
@@ -147,16 +94,11 @@
     <h2>Ratings for {{ movie.title }} ({{ movie.year }}):</h2>
   </div>
 
-  <table class="table" style="width:100%">
-    <tr>
-      <th>Username</th>
-      <th>Rating</th>
-      <th>Review</th>
-    </tr>
+  <table class="table" style="width:70%">
     {% for rating in ratings %}
     <tr>
       {% if session["user"] %}
-      <td><a href="/my_profile">{{rating.user.username}}</a></td>
+      <td><a href="/my_profile">@{{rating.user.username}}</a></td>
       <td>{{ rating.rating }}</td>
       <td>{{ rating.review }}</td>
       {% else %}

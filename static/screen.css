@@ -7,9 +7,9 @@ body {
 h1, h2, h3 { font-weight: normal; }
 
 /* navbar */
-nav { position: fixed; width: 100%; margin: 0px; padding: 0px; color: #fff; background-color: #000; border-bottom: 1px #fff solid; }
+nav { z-index: 1000; position: fixed; width: 100%; margin: 0px; padding: 0px; color: #fff; background-color: #000; border-bottom: 1px #fff solid; }
 nav a:link { text-decoration: none; }
-nav div { float: left; margin: 0; padding: 0.8em; font-size: 1.5em; height: 3.1em; background-color: #000}
+nav div { float: left; margin: 0; padding: 0.8em; font-size: 1.8em; height: 3.1em; background-color: #000}
 nav form { margin: 0; padding: 0; }
 nav form input { border: 0px; border-radius: 4px; font-size: 0.8em; padding: 0.25em; color: #000; }
 nav form button { border-radius: 2px; background: #000; color: #fff; box-shadow: 0; text-shadow: 0; font-size: 1em; border: 0; margin: 0; padding: 0; }
@@ -21,19 +21,19 @@ nav form button { border-radius: 2px; background: #000; color: #fff; box-shadow:
 nav a:link, nav a:visited { color: #ccc; }
 nav a:hover { color: #fff; }
 
-#navsearch, #navloggedin, #navlogin { border-left: 1px #fff solid; }
+#navsearch, #navloggedin, #navlogin { border-left: 1px #fff solid; height: 3.1em}
 #navsearchinput { width: 12em; }
 #navsearchbtn { color: #fff; }
 
 #navlogin { border-left: 1px #fff solid; }
 #navlogin label { color: #ccc; font-weight: normal; }
 
-#subnav { margin-top: -3em; font-size: 0.9em; float: right; text-align: right; background-color:transparent;}
+#subnav { margin-top: -3em; font-size: 0.9em; float: right; text-align: right; background-color:transparent; border-bottom: .05em;}
 #subnav li { list-style: none; display: inline; padding-left: 1em; }
 #subnav li a:link, #subnav li a:visited { color: #ccc; }
 #subnav li a:hover { color: #fff; }
 
-#logo { font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;}
+#logo { font-family: "HussarBdOppObl",Helvetica,Arial,sans-serif; font-size: 25px; padding: 1em}
 
 .jumbotron2 {
   /*background-color:transparent;*/
@@ -57,7 +57,17 @@ nav a:hover { color: #fff; }
   padding: 30px 15px;
   text-align: center;
 }
-
+.user_search {
+  padding-top: 2em;
+}
+.profile {
+  background-color: #fff;
+  border-radius:5px;
+  padding-top: 10px;
+  padding-left: 20px;
+  padding-right 20px;
+  padding-bottom: 20px;
+}
 .smallposter { margin-right: 10px; }
 
 form.rating h2 { margin: 0; font-size: 1.5em;}

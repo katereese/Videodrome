@@ -85,7 +85,7 @@ class Media(Base):
 	def small_poster(self):
 		if not self.poster:
 			return None
-		return self.poster.replace('SX300', 'SX50')
+		return self.poster.replace('SX300', 'SX60')
 
 """
 search by cast and crew, movie title, genre, 

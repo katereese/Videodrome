@@ -1,19 +1,35 @@
 {% extends "base2.html" %}
 {% block body %}
 
+
+
+
 <h2>Pick your favorite genres</h2>
 <br>
 <div class="container-fluid">
   	<div class="row">
 	   	<form action="/post_genres" METHOD="POST" class="genres">
 			{% for genre in genres %}
-			<div class="col-md-2">
+			   {% if genre in user.genres %}
+					<div class="col-md-2 genre-selected">
 
-			    <input type="checkbox" class="checkbox-primary" name="genres" value="{{ genre.id }}"
+			   {% else %}
+					<div class="col-md-2 genre-not-selected">
+			   {% endif %}
+				
+			    <input type="checkbox" class="hidden-checkbox" name="genres" id="{{genre.id}}" value="{{ genre.id }}"
 			    	{% if genre in user.genres %}
 			    		checked
 			    	{% endif %}>
-			    		{{ genre.genre }}
+
+			    		{% if genre.id == 26 %}
+			    		<label for="{{genre.id}}">{{genre.genre}}
+			    		<img src="http://icons.iconarchive.com/icons/limav/movie-genres-folder/256/Scifi-icon.png" width="150" height="150">
+						{% else %}
+			    		<label for="{{genre.id}}">{{genre.genre}}
+			    		<img src="http://icons.iconarchive.com/icons/limav/movie-genres-folder/256/{{ genre.genre }}-icon.png"width="150" height="150"> 
+			    		</label>		
+			    		{% endif %}
 			</div>
 			{% endfor %}
 	</div>
@@ -22,6 +38,53 @@
 	</div>
 		</form>
 </div>
+<br>
+<br>
+
+<script>
+	
+	$("input").change(function(e) {
+		console.log(this);
+		$(this).parent().toggleClass("genre-selected")
+	})
+</script>
+
+<style>
+h4 {
+  margin-top: 25px;
+}
+.row {
+  margin-bottom: 20px;
+}
+.row .row {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+[class*="col-"] {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #eee;
+  background-color: rgba(86,61,124,.15);
+  border: 1px solid #ddd;
+  border: 1px solid rgba(86,61,124,.2);
+}
+
+hr {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.hidden-checkbox {
+	position: relative;
+	top: 86px;
+	left: 80px;
+	z-index: -1;
+}
+
+.genre-selected {
+	background-color: #8a7f94;
+}
+</style>
 
 
 {% endblock %}
