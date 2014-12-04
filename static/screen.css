@@ -28,7 +28,7 @@ nav a:hover { color: #fff; }
 #navlogin { border-left: 1px #fff solid; }
 #navlogin label { color: #ccc; font-weight: normal; }
 
-#subnav { margin-top: -3em; font-size: 0.9em; float: right; text-align: right; background-color:transparent; border-bottom: .05em;}
+#subnav { margin-top: -3em; font-size: 0.9em; float: right; text-align: right; background-color:transparent; border-bottom: .5em; border-bottom-color: #fff;}
 #subnav li { list-style: none; display: inline; padding-left: 1em; }
 #subnav li a:link, #subnav li a:visited { color: #ccc; }
 #subnav li a:hover { color: #fff; }

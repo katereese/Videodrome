@@ -1,49 +1,64 @@
 {% extends 'base2.html' %}
 {% block body %}
 
+<title>User Profile</title>
+<br><br>
 <div class="container-fluid well span6">
   <div class="row-fluid">
+    <div class="col-md-4">
         <div class="span2">
-            <h3><img src="https://cdn1.iconfinder.com/data/icons/round-black-icons-2/78/user-512.png" class="img-circle" width="60" height="60"> Profile details for @{{user.username}}</h3>
-            <br>
+          <div class="profile">
+            <h3><img src="https://cdn1.iconfinder.com/data/icons/round-black-icons-2/78/user-512.png" class="img-circle" width="100" height="100"> </h3>
+            <h3>@{{user.username}}</h3>
             <h4>Full Name: {{ user.first_name }} {{ user.last_name }} </h4>
             <h4>Email: {{ user.email }}</h4>
             <h4>Age: {{ user.age }}</h4>
             <h4>Number of Ratings: {{ ratings|length }}</h4>
+            <h4>Gender: {% if user.gender == 0 %} Male {% endif %}
+                        {% if user.gender == 1 %} Female {% endif %}
+                        {% if user.gender == 2 %} Not specified {% endif %}
+            </h4>
+            <h4>Number of Ratings: {{ ratings|length }}
             <h4>Average rating: {{avg_rating}}</h4>
-            </form>
+          </div>
+          <br>
+            {% if 'user' in session %}
+            {% if user not in current_user.follows %}
+              <form action="/follow_user" method="post">
+              <input name="followee_id" type="hidden" value="{{ user.id }}">
+              <td><button type="submit">Follow user</button></td>
+              </form>
+            {% else %}
+              <p><i><font color="green" size="3">You are following @{{ user.username }}.</font></i></p>
+            {% endif %}
+          {% endif %}
         </div>
+      </div>
 <br>
-<div>
- <h3>Rating details
- </h3>
-    <table class="table table-condensed" style="width:100%">
-    <tr>
+    <div class="span2">
+      <div class="col-md-8">
+        <h3>User ratings</h3>
+    <table class="table table-condensed">
+<!--     <tr>
       <th>Movie</th>
       <th>Rating</th>
       <th>Review</th>
-    </tr>
+    </tr> -->
     {% for rating in ratings %}
       {% if rating.rating != 0 %}
     <tr>
-      <td><a href="/movie_prof?id={{ rating.movie_id }}">{{ rating.movie.title }}  ({{ rating.movie.year }})</a></td>
-      <td>{{ rating.rating }}</td>
-      <td>{{ rating.review }}</td>  
+      <td><SPAN><a href="/movie_prof?id={{ rating.movie_id }}">{{ rating.movie.title }}  ({{ rating.movie.year }})</a></SPAN></td>
+      <td><SPAN>{{ rating.rating }}<SPAN></td>
+      <td><SPAN>{{ rating.review }}<SPAN></td>  
     </tr>
       {% endif %}
     {% endfor %}
     </table>
-    {% if 'user' in session %}
-      {% if user not in current_user.follows %}
-        <form action="/follow_user" method="post">
-        <input name="followee_id" type="hidden" value="{{ user.id }}">
-        <td><button type="submit">Follow user</button></td>
-        </form>
-      {% else %}
-        <p><i>You are following @{{ user.username }}.</i></p>
-      {% endif %}
-    {% endif %}
 
-</div>      
+
+      </div>
+    </div>
+  </div>
+</div>   
 
 {% endblock %}

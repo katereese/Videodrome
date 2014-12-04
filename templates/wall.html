@@ -80,8 +80,8 @@
               <input id="rating-stars" name="star_rating" value="{{user_score}}" type="number" class="rating" min=0 max=5 step="1.0" data-size="xs" data-show-caption="false">
               <input type="submit" value="Rate" class="btn btn-default btn-xs">
               <input type="submit" name="not_interested" value="Not Interested" class="btn btn-default btn-xs">
-              {% if movie.tomatoUserRating %}<span class="wall_rating"><b>Rotten Tomatoes:</b> {{ movie.tomatoUserRating }} / 10</span>{% endif %}
-              {% if movie.imdbRating %}<span class="wall_rating"><b>IMDB:</b> {{ movie.imdbRating }} / 5</span>{% endif %}
+              {% if movie.tomatoUserRating %}<span class="wall_rating"><b>Rotten Tomatoes:</b> {{ movie.tomatoUserRating }} / 5</span>{% endif %}
+              {% if movie.imdbRating %}<span class="wall_rating"><b>IMDB:</b> {{ movie.imdbRating }} / 10</span>{% endif %}
             </form>
             <br>
           </li>

@@ -98,7 +98,7 @@
     {% for rating in ratings %}
     <tr>
       {% if session["user"] %}
-      <td><a href="/my_profile">@{{rating.user.username}}</a></td>
+      <td><a href="/user_profile?id={{rating.user_id}}">@{{rating.user.username}}</a></td>
       <td>{{ rating.rating }}</td>
       <td>{{ rating.review }}</td>
       {% else %}
