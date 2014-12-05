@@ -6,18 +6,19 @@ Choosing what to watch is an age-old problem. When looking for new movies, I oft
 Videodrone is ready to help you find your next favorite movie!
 
 ###Features
-* As logged out user, perform movie searches with view of details and website ratings
 * Log-in/logout and sign-up for a new account
+* As logged out user:
+    * perform movie searches with view of details and website ratings
 * As logged in user:
-* Update user profile
-* Pick/update favorite genres
-* Follow users via a one-way join, and view their profile and ratings
-* Query two recommendations engines based on: 
-  1. friend's ratings
-  2. picked genres and major website (IMDB & Rotten Tomatoes) ratings
-* Perform movie search with addtional view into user ratings
-* Rate and review movies
-* Choose not interested option, removing movie from recommendations lists
+    * Update user profile
+    * Pick/update favorite genres
+    * Follow users via a one-way join, and view their profile and ratings
+    * Query two recommendations engines based on: 
+      1. friend's ratings
+      2. picked genres and major website (IMDB & Rotten Tomatoes) ratings
+    * Perform movie search with addtional view into user ratings
+    * Rate and review movies
+    * Choose not interested option, removing movie from recommendations lists
 
 ###Screenshots
 
@@ -45,15 +46,15 @@ And place to add rating and review, along with other user ratings
 ![Screenshot](static/screenshots/movie profile2.png)
 
 ###Technology Stack
-* Python 2.7
-* MySQL 5.6.21
-* IMDdPY 5.0
+* Python
+* MySQL
+* IMDdPY
 * OMDb API
-* Flask 0.9
-* SQLAlchemy 0.7.9
-* Jinja2 2.6
+* Flask
+* SQLAlchemy
+* Jinja2
 * HTML5 / CSS
-* Bootstrap 3.3.0
+* Bootstrap
 * jQuery
 
 ###Acknowledgements
