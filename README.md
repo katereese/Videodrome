@@ -6,7 +6,7 @@ Choosing what to watch is an age-old problem. When looking for new movies, I oft
 Videodrone is ready to help you find your next favorite movie!
 
 ###Features
-* Log-in/logout and sign-up for a new account
+* Log in/log out and sign up for a new account
 * As logged out user:
     * perform movie searches with view of details and website ratings
 * As logged in user:
