@@ -178,8 +178,6 @@ def follow_user():
 	loggedin_user_id = int(session["user"].id)
 	# fetch followee id from template button submit form
 	followee_id = int(request.form.get('followee_id'))
-	#test
-	print "%d wants to follow %d" % (loggedin_user_id, followee_id)
 
 	# create objects that gets the followee and follower/loggedin user ids
 	follower_obj = dbsession.query(User).get(loggedin_user_id)

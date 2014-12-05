@@ -10,12 +10,8 @@ ENGINE = None
 Session = None
 
 # Create an instance of an engine that stores data in the local directory's
-# sqlalchemy_example.db file. If Echo=True then Engine will log all statements 
+# mysql file. If Echo=True then Engine will log all statements 
 # which is good for debugging.
-# mysql://root@localhost/movies
-# 
-
-# engine = create_engine('mysql://localhost/movies')
 
 engine = create_engine("mysql://root@localhost/vd", echo=False)
 session = scoped_session(sessionmaker(bind=engine,
@@ -26,6 +22,7 @@ session = scoped_session(sessionmaker(bind=engine,
 Base = declarative_base()
 Base.query = session.query_property()
 
+# association tables
 genres = Table('genres_association', Base.metadata,
 	Column('genre_id', Integer, ForeignKey('genres.id')),
 	Column('media_id', Integer, ForeignKey('media.id'))
@@ -82,14 +79,11 @@ class Media(Base):
 	people = relationship('People', secondary=people,
 		backref = backref('media', lazy='dynamic'))
 
+	# replaces large poster with a smaller version
 	def small_poster(self):
 		if not self.poster:
 			return None
 		return self.poster.replace('SX300', 'SX60')
-
-"""
-search by cast and crew, movie title, genre, 
-"""
 
 class Genre(Base):
 	__tablename__ = "genres"
@@ -119,8 +113,6 @@ class User(Base):
 	zipcode = Column(String(15), nullable=True)
 	avg_rating = 0.0
 
-	# user = relationship("User", backref=backref("users_info", order_by=id))
-
 	genres = relationship('Genre', secondary=user_genres,
 		order_by='Genre.genre', backref = backref('users', lazy='dynamic'))
 
@@ -136,7 +128,6 @@ class User(Base):
 			return "Female"
 		elif self.gender == 2:
 			return "Unspecified"
-
 
 class Rating(Base):
 	__tablename__ = "ratings"
