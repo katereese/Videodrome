@@ -33,10 +33,10 @@ Videodrone is ready to help you find your next favorite movie!
 
 ####Recommedations Engines, composed of 2 collapsable lists
 
-1. ######Friends recommendations engine, querying all followee rated movies, sorted in descending order by site average score, filtering out movies already rated by user or not interested (which adds 0 score to ratings table)
+1. ######Friends recommendations engine: querying all followee rated movies, sorted in descending order by site average score, filtering out movies already rated by user or not interested (which adds 0 score to ratings table)
 ![Screenshot](static/screenshots/friends recommendations.png)
 
-2. ######Videodrome recommendations engine, querying movies in picked genres, sorted in descending order by IMDB and Rotten Tomatoes critics scores, with above filters
+2. ######Videodrome recommendations engine: querying movies in picked genres, sorted in descending order by IMDB and Rotten Tomatoes critics scores, with above filters
 ![Screenshot](static/screenshots/vd recommendations.png)
 
 ####Movie profile page 
