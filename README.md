@@ -5,7 +5,7 @@ Videodrome
 Choosing what to watch is an age-old problem. When looking for new movies, I often consider three things: ratings on major websites, genre, and friends' opinions. Videodrome simplifies the search process, bringing these pieces together. Having imported the freely available IMDB dataset, Videodrome gives users access to the most comprehensive collection of entertainment available, with movie details, ratings from multiple sources, and user interaction, providing optimal recommendations results.
 Videodrone is ready to help you find your next favorite movie!
 
-###Users can
+###Features
 * As logged out user, perform movie searches with view of details and website ratings
 * Log-in/logout and sign-up for a new account
 * As logged in user:
@@ -30,7 +30,7 @@ Videodrone is ready to help you find your next favorite movie!
 ####User profile which can be updated, ratings/reviews with edit link, followees and followers are connected via one way joins
 ![Screenshot](static/screenshots/my profile.png)
 
-####Recommedations Engines, comprosed of 2 collapsable lists
+####Recommedations Engines, composed of 2 collapsable lists
 
 1. ######Friends recommendations engine, querying all followee rated movies, sorted in descending order by site average score, filtering out movies already rated by user or not interested (which adds 0 score to ratings table)
 ![Screenshot](static/screenshots/friends recommendations.png)
