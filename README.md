@@ -22,27 +22,27 @@ Videodrone is ready to help you find your next favorite movie!
 ###Screenshots
 
 ####Front Page/Navbar login/Sign up link
-![Screenshot](static/screenshots/front page.md)
+![Screenshot](static/screenshots/front page.png)
 
 ####Users pick genres and can update at any time
-![Screenshot](static/screenshots/pick genres.md)
+![Screenshot](static/screenshots/pick genres.png)
 
 ####User profile which can be updated, ratings/reviews with edit link, followees and followers are connected via one way joins
-![Screenshot](static/screenshots/my profile.md)
+![Screenshot](static/screenshots/my profile.png)
 
 ####Recommedations Engines, comprosed of 2 collapsable lists
 
 1. ######Friends recommendations engine, querying all followee rated movies, sorted in descending order by site average score, filtering out movies already rated by user or not interested (which adds 0 score to ratings table)
-![Screenshot](static/screenshots/friends recommendations.md)
+![Screenshot](static/screenshots/friends recommendations.png)
 
 2. ######Videodrome recommendations engine, querying movies in picked genres, sorted in descending order by IMDB and Rotten Tomatoes critics scores, with above filters
-![Screenshot](static/screenshots/vd recommendations.md)
+![Screenshot](static/screenshots/vd recommendations.png)
 
 ####Movie profile page 
 With extended movie details
-![Screenshot](static/screenshots/movie profile.md)
+![Screenshot](static/screenshots/movie profile.png)
 And place to add rating and review, along with other user ratings
-![Screenshot](static/screenshots/movie profile2.md)
+![Screenshot](static/screenshots/movie profile2.png)
 
 ###Technology Stack
 * Python 2.7
