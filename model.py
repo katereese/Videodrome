@@ -10,8 +10,7 @@ ENGINE = None
 Session = None
 
 # Create an instance of an engine that stores data in the local directory's
-# mysql file. If Echo=True then Engine will log all statements 
-# which is good for debugging.
+# mysql file. 
 
 engine = create_engine("mysql://root@localhost/vd", echo=False)
 session = scoped_session(sessionmaker(bind=engine,
@@ -90,14 +89,6 @@ class Genre(Base):
 
 	id = Column(Integer, primary_key=True)
 	genre = Column(String(64), nullable=False)
-
-class People(Base):
-	__tablename__ = "people"
-
-	id = Column(Integer, primary_key=True)
-	name = Column(String(200), nullable=False)
-	role = Column(String(64), nullable=True)
-	notes = Column(String(64), nullable=True)
 
 class User(Base):
 	__tablename__ = "users"
