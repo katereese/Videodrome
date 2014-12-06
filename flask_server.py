@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
 import collections
-import datetime
 from flask import Flask, render_template, redirect, request, flash, session
 from model import User, Media, Rating, Genre, genres, session as dbsession
 from sqlalchemy.orm import joinedload
 from sqlalchemy import desc, func, and_
 from sqlalchemy.sql import label
-from sqlalchemy.sql.expression import text, column
 from werkzeug.contrib.cache import SimpleCache
-import json
-import omdb
-import urllib
 
 import sys
 reload(sys)
@@ -210,9 +205,9 @@ def movie_search():
 def user_wall():
 	follows_media = None
 
-	## lists Friends recommendations
+	## Friends recommendations engine
 	if "user" in session:
-		# joins logged in user and the follows relationship
+		# joins logged in user and the follows relationship 
 		user = dbsession.query(User).options(joinedload('follows')).filter_by(id = session["user"].id).first()
 		# extract user id:s of people the user is following
 		followed_ids = []
@@ -441,95 +436,6 @@ def fixtitle(movies):
 		if movie.shortPlot:
 			movie.shortPlot = movie.shortPlot.decode('utf-8', 'ignore')
 
-
-# gets the movie prof by calling OMDB API
-@app.route("/movie_prof_API", methods=["GET", "POST"])
-def movie_prof_API():
-	id = request.args.get("id")
-	movie_info = dbsession.query(Media).get(id)
-	if not movie_info:
-		# movie not found
-		redirect('/wall')
-	populate_movie_from_OMDB(movie_info)
-	return redirect("/movie_prof?id=%d" % movie_info.id)
-
-@app.route("/import_from_OMDB")
-def import_from_OMDB():
-	movie_list = dbsession.query(Media).filter_by(omdbLoad=None).limit(10)
-	print ">>> Starting update"
-	updated = 0
-	for movie in movie_list:
-		print "Updating... %d %s (%d)" % (movie.id, movie.title, movie.year)
-		populate_movie_from_OMDB(movie)
-		updated = updated + 1
-	print ">>> Updated %d movies" % updated
-	return redirect ("/import_from_OMDB")
-
-# Takes a Media object as input and refreshes its data from the OMDB API
-def populate_movie_from_OMDB(movie_info):
-	# query API for move title using OMDB API parameters
-	# Exception Handler: do this where you expect a failure
-	title = movie_info.title #urllib.quote_plus(movie_info.title)
-	res = omdb.request(t=title, y=movie_info.year, r='JSON', apikey="e5b6d27b", tomatoes="true")
-	print "fetching [%s]" % title
- 
-	try:
-		json_content = json.loads(res.content)
-	# do this if failure
-	except: 
-		print res.content
-		return
-
-	# updates a column with datetime stamp
-	movie_info.omdbLoad = datetime.datetime.now()
-
-	# fetch attributes of json content to pass to movie_info object
-	poster = check_api_result(json_content, 'Poster')
-	if poster:
-		movie_info.poster = poster
-	imdbRating = check_api_result(json_content, 'imdbRating')
-	if imdbRating:
-		movie_info.imdbRating = float(imdbRating)
-	imdbID = check_api_result(json_content, 'imdbID')
-	if imdbID:
-		movie_info.imdbID = imdbID
-		movie_info.imdbURL = "http://www.imdb.com/title/%s" % imdbID
-	runtime = check_api_result(json_content, 'Runtime')
-	if runtime:
-		movie_info.runtime = runtime.replace(' min', '')
-	director = check_api_result(json_content, 'Director')
-	if director:
-		movie_info.director = director
-	actors = check_api_result(json_content, 'Actors')
-	if actors:
-		movie_info.actors = actors
-	tomatoMeter = check_api_result(json_content, 'tomatoMeter')
-	if tomatoMeter:
-		movie_info.tomatoMeter = int(tomatoMeter)
-	tomatoUserRating = check_api_result(json_content, 'tomatoUserRating')
-	if tomatoUserRating:
-		movie_info.tomatoUserRating = float(tomatoUserRating)
-	tomatoUserMeter = check_api_result(json_content, 'tomatoUserMeter')
-	if tomatoUserMeter:
-		movie_info.tomatoUserMeter = int(tomatoUserMeter)
-	mpaa_rating = check_api_result(json_content, 'Rated')
-	if mpaa_rating:
-		movie_info.mpaa_rating = mpaa_rating
-	metascore = check_api_result(json_content, 'Metascore')
-	if metascore:
-		movie_info.metascore = int(metascore)
-	shortPlot = check_api_result(json_content, 'Plot')
-	if shortPlot:
-		movie_info.shortPlot = shortPlot
-
-	dbsession.add(movie_info)
-	dbsession.commit()
-
-def check_api_result(json_content, field):
-	if field in json_content and json_content[field] != 'N/A':
-		return json_content[field]
-	else:
-		return None
 
 if __name__ == '__main__':
 	# starts the built-in web server on port 5000
