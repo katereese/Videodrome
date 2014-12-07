@@ -27,7 +27,7 @@ Choosing what to watch is an age-old problem. When looking for new movies, I oft
 ####Users pick genres and can update any time
 ![Screenshot](static/screenshots/pick genres.png)
 
-####User profile update/ Ratings and reviews with editability / Users connected via one way joins
+####User profile update / Ratings and reviews with editability / Users connected via one way joins
 ![Screenshot](static/screenshots/my profile.png)
 
 ####Recommedations Engines, composed of 2 collapsable lists
