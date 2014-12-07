@@ -2,8 +2,17 @@ Videodrome
 ==========
 
 ###Summary
-Choosing what to watch is an age-old problem. When looking for new movies, I often consider three things: ratings on major websites, genre, and friends' opinions. Videodrome simplifies the search process, bringing these pieces together. Having imported the freely available IMDB dataset, Videodrome gives users access to the most comprehensive collection of entertainment available, with movie details, ratings from multiple sources, and user interaction, providing optimal recommendations results.
+Choosing what to watch is an age-old problem. When looking for new movies, I often consider three things: ratings on major websites, genre, and friends' opinions. Videodrome simplifies the search process, bringing these pieces together. Having imported the freely available IMDB dataset, Videodrome gives users access to the most comprehensive collection of entertainment available, with movie details, ratings from multiple sources, and user interaction, providing relevant recommendations results.
 
+###Functionality
+* Aggregated two data sources to create extensive database:
+    1. <a href="http://imdbpy.sourceforge.net/">IMDbPY</a>
+    2. <a href="http://www.omdbapi.com/">OMDb API</a>
+* Recommendations loadtime optimization using:
+    * Indexing
+    * Caching
+    * Reduced subqueries with joins
+    
 ###User Features
 * Log in/log out and sign up for a new account
 * As logged out user:
@@ -55,10 +64,6 @@ And place to add rating and review, along with other user ratings
 * HTML5 / CSS
 * Bootstrap
 * jQuery
-
-###Importing tools
-* <a href="http://imdbpy.sourceforge.net/">IMDbPY</a>
-* <a href="http://www.omdbapi.com/">OMDb API</a>
 
 ###Design Acknowledgements
 * Front page background image from <a href="http://www.geekoutpost.com/">Geek Outpost<a/>
