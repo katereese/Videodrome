@@ -60,7 +60,7 @@ And place to add rating and review, along with other user ratings
 * <a href="http://imdbpy.sourceforge.net/">IMDbPY</a>
 * <a href="http://www.omdbapi.com/">OMDb API</a>
 
-###Acknowledgements
+###Design Acknowledgements
 * Front page background image from <a href="http://www.geekoutpost.com/">Geek Outpost<a/>
 * Genres folder images from <a href="http://icons.iconarchive.com/">Icons Archive<a/>
 * Logo font from http://www.1001freefonts.com/ by Robert Jablonski
