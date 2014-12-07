@@ -4,7 +4,7 @@ Videodrome
 ###Summary
 Choosing what to watch is an age-old problem. When looking for new movies, I often consider three things: ratings on major websites, genre, and friends' opinions. Videodrome simplifies the search process, bringing these pieces together. Having imported the freely available IMDB dataset, Videodrome gives users access to the most comprehensive collection of entertainment available, with movie details, ratings from multiple sources, and user interaction, providing relevant recommendations results.
 
-###Functionality
+###Key techniques used
 * Aggregated two data sources to create extensive database:
     1. <a href="http://imdbpy.sourceforge.net/">IMDbPY</a>
     2. <a href="http://www.omdbapi.com/">OMDb API</a>
@@ -13,7 +13,7 @@ Choosing what to watch is an age-old problem. When looking for new movies, I oft
     * Caching
     * Reduced subqueries with joins
     
-###User Features
+###Features
 * Log in/log out and sign up for a new account
 * As logged out user:
     * perform movie searches with view of details and website ratings
@@ -28,12 +28,24 @@ Choosing what to watch is an age-old problem. When looking for new movies, I oft
     * Rate and review movies
     * Choose not interested option, removing movie from recommendations lists
 
+###Technology Stack
+* Python
+* MySQL
+* IMDdPY
+* OMDb API
+* Flask
+* SQLAlchemy
+* Jinja2
+* HTML5 / CSS
+* Bootstrap
+* jQuery
+
 ###Screenshots
 
 ####Front Page / Navbar login / Sign up link
 ![Screenshot](static/screenshots/front page.png)
 
-####Users pick genres and can update any time
+####Users pick genres; update any time
 ![Screenshot](static/screenshots/pick genres.png)
 
 ####User profile update / Ratings and reviews with editability / Users connected via one way joins
@@ -52,18 +64,6 @@ With extended movie details
 ![Screenshot](static/screenshots/movie profile.png)
 And place to add rating and review, along with other user ratings
 ![Screenshot](static/screenshots/movie profile2.png)
-
-###Technology Stack
-* Python
-* MySQL
-* IMDdPY
-* OMDb API
-* Flask
-* SQLAlchemy
-* Jinja2
-* HTML5 / CSS
-* Bootstrap
-* jQuery
 
 ###Design Acknowledgements
 * Front page background image from <a href="http://www.geekoutpost.com/">Geek Outpost<a/>
