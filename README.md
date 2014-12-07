@@ -3,9 +3,8 @@ Videodrome
 
 ###Summary
 Choosing what to watch is an age-old problem. When looking for new movies, I often consider three things: ratings on major websites, genre, and friends' opinions. Videodrome simplifies the search process, bringing these pieces together. Having imported the freely available IMDB dataset, Videodrome gives users access to the most comprehensive collection of entertainment available, with movie details, ratings from multiple sources, and user interaction, providing optimal recommendations results.
-Videodrone is ready to help you find your next favorite movie!
 
-###Features
+###User Features
 * Log in/log out and sign up for a new account
 * As logged out user:
     * perform movie searches with view of details and website ratings
@@ -22,13 +21,13 @@ Videodrone is ready to help you find your next favorite movie!
 
 ###Screenshots
 
-####Front Page/Navbar login/Sign up link
+####Front Page / Navbar login / Sign up link
 ![Screenshot](static/screenshots/front page.png)
 
-####Users pick genres and can update at any time
+####Users pick genres and can update any time
 ![Screenshot](static/screenshots/pick genres.png)
 
-####User profile which can be updated, ratings/reviews with edit link, followees and followers are connected via one way joins
+####User profile update/ Ratings and reviews with editability / Users connected via one way joins
 ![Screenshot](static/screenshots/my profile.png)
 
 ####Recommedations Engines, composed of 2 collapsable lists
@@ -56,6 +55,10 @@ And place to add rating and review, along with other user ratings
 * HTML5 / CSS
 * Bootstrap
 * jQuery
+
+###Importing tools
+* <a href="http://imdbpy.sourceforge.net/">IMDbPY</a>
+* <a href="http://www.omdbapi.com/">OMDb API</a>
 
 ###Acknowledgements
 * Front page background image from <a href="http://www.geekoutpost.com/">Geek Outpost<a/>
