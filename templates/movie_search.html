@@ -2,13 +2,14 @@
 {% block body %}
 
 <title>Wall</title>
-<div class="container">
-	<form action="/movie_search" method="GET">
-		<h2>Search for Movie</h2>
-        <input type="text" name="title" placeholder="Movie" value="{{ request.args.get('title')|e }}">
-        <button type="submit">Search</button>
- 	</form>
+<div class="container user_search">
+  	<form action="/movie_search" method="GET" class="form-inline">
+  		<h2>Search for Movie</h2>
+          <input type="text" name="title" class="form-control" placeholder="Movie" value="{{ request.args.get('title')|e }}">
+          <button class="btn btn-primary btn-sm" type="submit">Search</button>
+   	</form>
 </div>
+<br>
 <br>
 <div class="container">
   {% if movies or movies2 %}
@@ -20,11 +21,7 @@
             <form action="/add_rating" METHOD="POST">
               <input type="hidden" name="id" value="{{ movie.id }}">
               <input type="hidden" name="rating_from_wall" value="{{ movie.id }}">
-              <input type="radio" name="star_rating" value="1">
-              <input type="radio" name="star_rating" value="2">
-              <input type="radio" name="star_rating" value="3">
-              <input type="radio" name="star_rating" value="4">
-              <input type="radio" name="star_rating" value="5">
+              <input id="rating-stars" name="star_rating" value="{{user_score}}" type="number" class="rating" min=0 max=5 step="1.0" data-size="xs" data-show-caption="false">
               <input type="submit" value="Rate" class="btn btn-default btn-xs">
               <input type="submit" name="not_interested" value="Not Interested" class="btn btn-default btn-xs">
               <span class="wall_rating"><b>Rotten Tomatoes:</b>{% if movie.tomatoUserRating %} {{ movie.tomatoUserRating }} / 10</span>{% endif %}
@@ -41,12 +38,7 @@
             {% if movie.shortPlot %}<span class="plot">{{ movie.shortPlot|e }}</span>{% endif %}
             <form action="/add_rating" METHOD="POST">
               <input type="hidden" name="id" value="{{ movie.id }}">
-              <input type="hidden" name="rating_from_wall" value="{{ movie.id }}">
-              <input type="radio" name="star_rating" value="1">
-              <input type="radio" name="star_rating" value="2">
-              <input type="radio" name="star_rating" value="3">
-              <input type="radio" name="star_rating" value="4">
-              <input type="radio" name="star_rating" value="5">
+              <input id="rating-stars" name="star_rating" value="{{user_score}}" type="number" class="rating" min=0 max=5 step="1.0" data-size="xs" data-show-caption="false">
               <input type="submit" value="Rate" class="btn btn-default btn-xs">
               <input type="submit" name="not_interested" value="Not Interested" class="btn btn-default btn-xs">
               {% if movie.tomatoUserRating %}<span class="wall_rating"><b>Rotten Tomatoes:</b> {{ movie.tomatoUserRating }} / 5</span>{% endif %}

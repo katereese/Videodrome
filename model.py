@@ -5,7 +5,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.orm import scoped_session
 
-
 ENGINE = None
 Session = None
 
@@ -25,10 +24,6 @@ Base.query = session.query_property()
 genres = Table('genres_association', Base.metadata,
 	Column('genre_id', Integer, ForeignKey('genres.id')),
 	Column('media_id', Integer, ForeignKey('media.id'))
-)
-people = Table('people_association', Base.metadata,
-    Column('people_id', Integer, ForeignKey('people.id')),
-    Column('media_id', Integer, ForeignKey('media.id'))
 )
 user_genres = Table('user_genre_assoc', Base.metadata,
 	Column('genre_id', Integer, ForeignKey('genres.id')),
@@ -73,9 +68,6 @@ class Media(Base):
 	omdbLoad = Column(DateTime, nullable=True)
 
 	genres = relationship('Genre', secondary=genres,
-		backref = backref('media', lazy='dynamic'))
-
-	people = relationship('People', secondary=people,
 		backref = backref('media', lazy='dynamic'))
 
 	# replaces large poster with a smaller version
