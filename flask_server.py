@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import collections
+import hashlib
 from flask import Flask, render_template, redirect, request, flash, session
 from model import User, Media, Rating, Genre, genres, session as dbsession
 from sqlalchemy.orm import joinedload
@@ -24,7 +25,8 @@ def index():
 def login():
 	# fetch email and password from userinput client-side
 	email = request.form.get("email")
-	password = request.form.get("password")
+	password = hash_password(request.form.get("password"), email)
+
 	# check for user email and password in db
 	u = dbsession.query(User).filter_by(email=email).filter_by(password=password).first()
 	#if user is in db, add to session (cookie dictionary), if not redirect to login url
@@ -59,8 +61,10 @@ def sign_up_form():
 		age = int(request.form.get("age"))
 		zipcode = request.form.get("zipcode")
 		
+		hashed_password = hash_password(password, email)
+
 		# create an instance of User with email, password, username, etc. as attributes
-		user = User(email=email, password=password, username=username, first_name=first_name, 
+		user = User(email=email, password=hashed_password, username=username, first_name=first_name, 
 			last_name=last_name, gender=gender, age=age, zipcode=zipcode)
 		
 		# check for email in db, if not there, add it to db
@@ -436,6 +440,11 @@ def fixtitle(movies):
 		if movie.shortPlot:
 			movie.shortPlot = movie.shortPlot.decode('utf-8', 'ignore')
 
+# returns a hashed version of the password
+def hash_password(password, salt):
+	hash = hashlib.sha256()
+	hash.update(salt + password)
+	return hash.hexdigest()
 
 if __name__ == '__main__':
 	# starts the built-in web server on port 5000
