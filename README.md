@@ -2,12 +2,15 @@ Videodrome
 ==========
 
 ###Summary
-Choosing what to watch is an age-old problem. When looking for new movies, I often consider three things: ratings on major websites, genre, and friends' opinions. Videodrome simplifies the search process, bringing these pieces together. Having imported the freely available IMDB dataset, Videodrome gives users access to the most comprehensive collection of entertainment available, with movie details, ratings from multiple sources, and user interaction, providing relevant recommendations results.
+Choosing what to watch is an age-old problem. When looking for new movies, three common considerations are: ratings on major websites, genre, and friends' opinions. Videodrome simplifies the search process, bringing these pieces together. Having imported the IMDB dataset, sanitized and aggregated with other site ratings, Videodrome gives users access to the most comprehensive collection of movies available, adding in user interaction to provide relevant recommendations results.
 
 ###Key techniques used
-* Aggregated two data sources to create extensive database:
+* Aggregated data sources using two importing tools to create extensive database:
     1. <a href="http://imdbpy.sourceforge.net/">IMDbPY</a>
     2. <a href="http://www.omdbapi.com/">OMDb API</a>
+* Reorganized data for better querying and results:
+    1. Designed an ETL process
+    2. Sanitized Used spot queries to remove unwanted content
 * Recommendations loadtime optimization using:
     * Indexing
     * Caching
