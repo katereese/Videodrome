@@ -218,11 +218,9 @@ def user_wall():
 		for u in user.follows:
 			followed_ids.append(u.id)
 
-		# queries movies that have been rated by people the user follows
-		# but not the user itself.
-		#
-		# 'reset_joinpoint().outerjoin(...).filter()' filters out the user's own
-		# ratings.
+		# queries movies that have been rated by people the user follows but not the user itself.
+		
+		# 'reset_joinpoint().outerjoin(...).filter()' filters out the user's own ratings.
 		follows_media = dbsession.query(Media,
 			label('avg_rating', func.avg(Rating.rating))).\
 			join(Rating).\
@@ -287,8 +285,8 @@ def user_wall():
 
 def base_media_query():
 	print "I'm querying all the movies.."
-	# sorts movies by higest tomato meter, then highest imdb rating ---- want to filter by already rated
-	return dbsession.query(Media).order_by(desc('tomatoMeter')).order_by(desc('imdbRating'))
+	# sorts movies by higest tomato meter, then highest imdb rating
+	return dbsession.query(Media).order_by(desc('imdbRating')).order_by(desc('tomatoMeter')).filter(Media.tomatoMeter != 0)
 
 @app.route("/genre_prof", methods=["GET"])
 def genre_profile():

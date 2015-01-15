@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
-from sqlalchemy import Table, Column, DateTime, Float, Integer, String, Text, ForeignKey, UniqueConstraint
+from sqlalchemy import Table, Boolean, Column, DateTime, Float, Integer, String, Text, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.orm import scoped_session
@@ -56,7 +56,7 @@ class Media(Base):
 	kind = Column(String(16), nullable=True)
 	actors = Column(Text, nullable=True)
 	director = Column(String(64), nullable=True)
-	poster = Column(String(256), nullable=True)
+	poster = Column(Boolean, nullable=True)
 	metascore = Column(Integer, nullable=True)
 	imdbRating = Column(Float, nullable=True)
 	imdbID = Column(String(64), nullable=True)

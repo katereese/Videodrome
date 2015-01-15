@@ -1,6 +1,6 @@
 
 body {
-	background-color: #eee;
+	background-color: #dedfe3;
   padding-bottom:  2em;
 }
 
@@ -89,12 +89,12 @@ nav a:hover {
   font-weight: normal; 
 }
 #subnav { 
-  margin-top: -3em; 
+  margin-top: 3em; 
   font-size: 0.9em; 
   float: right; 
   text-align: right; 
   background-color:transparent; 
-  border-bottom: .5em; 
+/*  border-bottom: .5em; */
   border-bottom-color: #fff;
 }
 #subnav li { 
@@ -135,6 +135,7 @@ nav a:hover {
 .starter-template {
   padding: 30px 15px;
   text-align: center;
+  background-color: white;
 }
 .user_search {
   padding-top: 2em;

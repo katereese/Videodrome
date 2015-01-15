@@ -21,11 +21,11 @@ def import_from_OMDB():
 # Takes a Media object as input and refreshes its data from the OMDB API
 def populate_movie_from_OMDB(movie_info):
 	# query API for move title using OMDB API parameters
-	# Exception Handler: do this where you expect a failure
 	title = movie_info.title #urllib.quote_plus(movie_info.title)
 	res = omdb.request(t=title, y=movie_info.year, r='JSON', apikey="e5b6d27b", tomatoes="true")
 	print "fetching [%s]" % title
  
+ 	# Exception Handler: do this where you expect a failure
 	try:
 		json_content = json.loads(res.content)
 	# do this if failure

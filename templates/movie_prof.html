@@ -5,7 +5,7 @@
 <title>Movie Profile {{ movie.title }} ({{ movie.year }})</title>
 <div class="container">
   {% if movie.poster %}
-      <img src="{{ movie.poster }}" align="right" style="margin-left: 2em; ">
+      <img src="/static/posters/{{ movie.imdbID }}_450.jpg" align="right" style="margin-left: 2em; ">
   {% endif %}
 
   <h1>{{ movie.title }} ({{ movie.year }})</h1>
@@ -83,7 +83,6 @@
         <input type="hidden" name="id" value="{{ movie.id }}">
         <input type="submit" name="not_interested" value="Not Interested" class="btn btn-danger">
       </form>
-
 
   {% endif %} 
 
