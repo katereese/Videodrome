@@ -11,7 +11,7 @@
   <h1>{{ movie.title }} ({{ movie.year }})</h1>
 <!--   <a href="/movie_prof_API?id={{ movie.id }}">Load from OMDB</a>
  -->    {% if avg_rating == 0 %}
-    <h3>Videodrome score: N/A</h3>
+    <h3>Videodrome score: No user ratings yet.</h3>
     {% else %}
     <h3>Videodrome score {{ avg_rating }}</h3>
     {% endif %}
@@ -39,10 +39,9 @@
 
     {% if movie.imdbID %}
     <div class="imdb">
-      <h4>IMDB</h4>
+      <h4><a href="{{ movie.imdbURL }}">IMDB</a></h4>
       <ul>
-        <li>IMDB rating: {{ movie.imdbRating }}</li>
-        <li>Check <a href="{{ movie.imdbURL }}">it out on IMDB</a></li>
+        <li>Rating: {{ movie.imdbRating }}</li>
       </ul>
     </div>
     {% endif %}

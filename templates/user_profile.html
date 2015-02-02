@@ -12,8 +12,8 @@
             <h3>@{{user.username}}</h3>
             <h4>Full Name: {{ user.first_name }} {{ user.last_name }} </h4>
             <h4>Email: {{ user.email }}</h4>
-            <h4>Age: {{ user.age }}</h4>
-            <h4>Number of Ratings: {{ ratings|length }}</h4>
+            <h4>{{ user.age }} years old</h4>
+            <h4>{{ ratings|length }} ratings</h4>
             <h4>{% if user.gender == 0 %} Male {% endif %}
                 {% if user.gender == 1 %} Female {% endif %}
                 {% if user.gender == 2 %} Not specified {% endif %}

@@ -10,14 +10,14 @@ h1, h2, h3 {
 
 /* NAV CLASSES */
 nav { 
-  z-index: 1000; 
-  position: fixed; 
-  width: 100%; 
-  margin: 0px; 
-  padding: 0px; 
+  z-index: 1000;
+  position: fixed;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
   color: #fff; 
   background-color: #000; 
-  border-bottom: 1px #fff solid; 
+  border-bottom: 2px #fff solid; 
 }
 nav a:link { 
   text-decoration: none; 
@@ -73,13 +73,15 @@ nav a:hover {
 }
 #navsearch, #navloggedin, #navlogin { 
   border-left: 1px #fff solid; 
-  height: 3.1em; 
+  height: 3.1em;
 }
 #navsearchinput { 
-  width: 12em; 
+  width: 12em;
+  margin-left: 0.5em;
 }
 #navsearchbtn { 
-  color: #fff; 
+  color: #fff;
+  margin-top: 0.7em;
 }
 #navlogin { 
   border-left: 1px #fff solid; 

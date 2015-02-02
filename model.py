@@ -71,10 +71,10 @@ class Media(Base):
 		backref = backref('media', lazy='dynamic'))
 
 	# replaces large poster with a smaller version
-	def small_poster(self):
-		if not self.poster:
-			return None
-		return self.poster.replace('SX300', 'SX60')
+	# def small_poster(self):
+	# 	if not self.poster:
+	# 		return None
+	# 	return self.poster.replace('SX300', 'SX60')
 
 class Genre(Base):
 	__tablename__ = "genres"

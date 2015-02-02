@@ -1,95 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="../../favicon.ico">
 
-    <title>Videodrome</title>
+  <title>Videodrome</title>
 
-    <!-- Bootstrap core CSS -->
-    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
-    
-    <link href="/static/screen.css" rel="stylesheet">
-    <link href="/static/star-rating.min.css" media="all" rel="stylesheet" type="text/css"/>
+  <!-- Bootstrap core CSS -->
+  <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+  
+  <link href="/static/screen.css" rel="stylesheet">
+  <link href="/static/star-rating.min.css" media="all" rel="stylesheet" type="text/css"/>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <!-- My Javascript -->
-    <script src="/static/videodrome.js"></script>
-    <script src="/static/star-rating.min.js" type="text/javascript"></script>
-  </head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <!-- My Javascript -->
+  <script src="/static/videodrome.js"></script>
+  <script src="/static/star-rating.min.js" type="text/javascript"></script>
+</head>
 
-  <body>
-
-    <nav role="navigation">
-        <div id="logo">
-          <a href="/">Videodrome</a>
-        </div>
-        <div id="navsearch"><!-- search box -->
-          <form role="search" action="/movie_search" method="GET">
-              <input type="text" placeholder="Search movies" name="title" id="navsearchinput">
-              <a href="#" id="navsearchbtn"><span
-          class="glyphicon glyphicon-search"></span></a>
-          </form>
-        </div>
-          <!-- check to see if logged in -->
-          {% if session.get("login", False) %}
-        <div class="navgroup" id="navloggedin"><!-- post log in menu -->
-          <ul>
-            <li><a href="/my_profile"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></li>
-            <li><a href="/logout">Log out</a></li>
-          </ul>
-        </div>
-        <div id="subnav">
-          <ul>
-            <li><a href="/wall">movies </a> /</li>
-            <li><a href="/pick_genres">genres</a> /</li>
-            <li><a href="/user_list">users </a></li>
-          </ul>
-        </div>
-          {% else %}
-        <div id="navlogin"><!-- login form -->
-          <form role="login" method="POST" action="/login">
-              <input type="text" placeholder="Email address" name="email" id="logininput">
-              <input type="password" placeholder="Password" name="password" id="logininput">
-              <label><button id="loginbtn">Log in</button> or <a href="/sign_up">Sign up</a></label>
-          </form>
-        </div>
-          {% endif %}
-<!--           <br style="clear: both">
-        {% if session.get("login", False) %}
-        <div id="subnav">
-          <ul>
-            <li><a href="/wall">movies </a> /</li>
-            <li><a href="/pick_genres">genres</a> /</li>
-            <li><a href="/user_list">users </a></li>
-          </ul>
-        </div>
-        {% endif %} -->
-    </nav>
-
-    <!-- </div> -->
-<div class="container">
-
-      <div class="starter-template">
-        <h1></h1>
-        <p class="lead"></p>
+<body>
+  <nav role="navigation">
+    <div id="logo">
+      <a href="/">Videodrome</a>
+    </div>
+    <!-- search box -->
+    <div id="navsearch">
+      <form role="search" action="/movie_search" method="GET">
+        <a href="#" id="navsearchbtn"><span class="glyphicon glyphicon-search"></span></a>
+        <input type="text" placeholder="Search movies" name="title" id="navsearchinput">
+      </form>
+    </div>
+    <!-- check to see if logged in -->
+    {% if session.get("login", False) %}
+      <!-- post log in menu -->
+      <div class="navgroup" id="navloggedin">
+        <ul>
+          <li><a href="/my_profile"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></li>
+          <li><a href="/logout">Log out</a></li>
+        </ul>
       </div>
-
-        <div class="container">
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            {% for message in messages %}
-            <ul class="flashes">
-                <li>{{message}}</li>
-            </ul>
-            {% endfor %}
-            {% endif %}
-            {% endwith %}
-        </div>
+      <div id="subnav">
+        <ul>
+          <li><a href="/wall">movies </a> /</li>
+          <li><a href="/pick_genres">genres</a> /</li>
+          <li><a href="/user_list">users </a></li>
+        </ul>
+      </div>
+    {% else %}
+      <div id="navlogin"><!-- login form -->
+        <form role="login" method="POST" action="/login">
+            <input type="text" placeholder="Email address" name="email" id="logininput">
+            <input type="password" placeholder="Password" name="password" id="logininput">
+            <label><button id="loginbtn">Log in</button> or <a href="/sign_up">Sign up</a></label>
+        </form>
+      </div>
+    {% endif %}
+  </nav>
+  <div class="container">
+    <div class="starter-template">
+      <h1></h1>
+      <p class="lead"></p>
+    </div>
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <ul class="flashes">
+            <li>{{message}}</li>
+        </ul>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
 
 {% block body %}
 {% endblock %}
@@ -98,5 +84,5 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-  </body>
+</body>
 </html>

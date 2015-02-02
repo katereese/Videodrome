@@ -4,10 +4,10 @@
 <title>Wall</title>
 
 <h2>Search for a Movie</h2>
-<form action="/movie_search" method="GET" class="form-inline">
+  <form action="/movie_search" method="GET" class="form-inline">
     <input type="text" name="title" placeholder="Movie" class="form-control">
       <button type="submit" class="btn btn-primary btn-sm">Search</button>
- </form>
+  </form>
 
 <br>
   
@@ -25,7 +25,6 @@
         <ul class="movie_listing">
         {% for i, rating in media %}
           <li>
-            <!-- <img src="{{ i.small_poster() }}" align="left" class="smallposter"> -->
             <img src="/static/posters/{{ i.imdbID }}_95.jpg" align="left" class="smallposter">
             <a href="/movie_prof?id={{ i.id }}"><font size="3">{{ i.title }} ({{ i.year }})</font></a>
             <br>

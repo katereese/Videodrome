@@ -207,9 +207,9 @@ def movie_search():
 
 @app.route("/wall")
 def user_wall():
-	follows_media = None
-
+	
 	## Friends recommendations engine
+	follows_media = None
 	if "user" in session:
 		# joins logged in user and the follows relationship 
 		user = dbsession.query(User).options(joinedload('follows')).filter_by(id = session["user"].id).first()
@@ -281,7 +281,7 @@ def user_wall():
 			print "\n\nFound in cache!\n\n"
 			genre_dict = genre_dict_from_cache
 
-	return render_template("wall.html", genres = genre_dict, media=follows_media)
+	return render_template("wall.html", genres = genre_dict, media = follows_media)
 
 def base_media_query():
 	print "I'm querying all the movies.."
