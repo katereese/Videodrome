@@ -10,7 +10,7 @@ Choosing what to watch is an age-old problem. When looking for new movies, three
     2. <a href="http://www.omdbapi.com/">OMDb API</a>
 * Reorganized data for better querying and results:
     1. Designed an ETL process
-    2. Sanitized Used spot queries to remove unwanted content
+    2. Used spot queries to remove unwanted content
 * Recommendations loadtime optimization using:
     * Indexing
     * Caching
