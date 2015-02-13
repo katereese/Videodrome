@@ -145,6 +145,7 @@ nav a:hover {
 .profile {
   background-color: #fff;
   border-radius:5px;
+  border-color: black;
   padding-top: 10px;
   padding-left: 20px;
   padding-right 20px;

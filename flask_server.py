@@ -2,6 +2,7 @@
 import collections
 import hashlib
 from flask import Flask, render_template, redirect, request, flash, session
+from functools import wraps
 from model import User, Media, Rating, Genre, genres, session as dbsession
 from sqlalchemy.orm import joinedload
 from sqlalchemy import desc, func, and_
@@ -17,11 +18,26 @@ app.secret_key ='bosco'
 # Simple cache should only be initialized once
 cache = SimpleCache()
 
+# clean up after db errors
+def auto_rollback(f):
+	@wraps(f)
+	def decorated_function(*args, **kwargs):
+		try:
+			return f(*args, **kwargs)
+		except:
+			print "Error: ", sys.exc_info()[0]
+			dbsession.rollback()
+			raise ValueError("An error occurred")
+		finally:
+			dbsession.close()
+	return decorated_function
+
 @app.route("/")
 def index():
 	return render_template("front.html")
 
-@app.route("/login", methods=["POST"])  
+@app.route("/login", methods=["POST"])
+@auto_rollback
 def login():
 	# fetch email and password from userinput client-side
 	email = request.form.get("email")
@@ -46,10 +62,12 @@ def logout():
 	return redirect("/") 
 
 @app.route("/sign_up")
+@auto_rollback
 def sign_up():
 	return render_template("sign_up.html", user=get_current_user())
 
 @app.route("/sign_up", methods=["POST"])
+@auto_rollback
 def sign_up_form():
 		## input new user input into database
 		email = request.form.get("email")
@@ -80,6 +98,7 @@ def sign_up_form():
 			return redirect("/pick_genres")
 
 @app.route("/update_prof", methods=["POST"])
+@auto_rollback
 def update_prof():
 	# gets the current user
 	user = get_current_user()
@@ -109,6 +128,7 @@ def get_current_user():
 		return None
 
 @app.route("/my_profile")
+@auto_rollback
 def my_profile():
 	# fetch user_id from the session dictionary of logged-in user
 	user_id = session["login"]
@@ -119,6 +139,7 @@ def my_profile():
 	return render_template("my_profile.html", user=user, ratings=ratings)
 
 @app.route("/user_list")
+@auto_rollback
 def user_list():
 	loggedin_user = int(session["user"].id)
 	# print user_id
@@ -138,6 +159,7 @@ def user_list():
 	return render_template("user_list.html", users=user_list, user=user)
 
 @app.route("/user_search")
+@auto_rollback
 def user_search():
 	loggedin_user_id = int(session["user"].id)
 	
@@ -160,6 +182,7 @@ def user_search():
 		return redirect("/user_profile?id=%d" % user_info.id)
 
 @app.route("/user_profile", methods=["GET"])
+@auto_rollback
 def user_profile():
 	id = int(request.args.get("id"))
 	current_user = None
@@ -173,6 +196,7 @@ def user_profile():
 	return render_template("user_profile.html", user=user_info, ratings=ratings, avg_rating=avg_rating, current_user=current_user)
 
 @app.route("/follow_user", methods=["POST"])
+@auto_rollback
 def follow_user():
 	loggedin_user_id = int(session["user"].id)
 	# fetch followee id from template button submit form
@@ -188,6 +212,7 @@ def follow_user():
 	return redirect("/my_profile")
 
 @app.route("/movie_search")
+@auto_rollback
 def movie_search():
 	## movie search
 	title = request.args.get("title")
@@ -206,6 +231,7 @@ def movie_search():
 	return render_template("movie_search.html", movies=movies, movies2=movies2)
 
 @app.route("/wall")
+@auto_rollback
 def user_wall():
 	
 	## Friends recommendations engine
@@ -289,6 +315,7 @@ def base_media_query():
 	return dbsession.query(Media).order_by(desc('imdbRating')).order_by(desc('tomatoMeter')).filter(Media.tomatoMeter != 0)
 
 @app.route("/genre_prof", methods=["GET"])
+@auto_rollback
 def genre_profile():
 	id = int(request.args.get("id"))
 	if not id:
@@ -300,6 +327,7 @@ def genre_profile():
 	return render_template("genre_prof.html", media = media, genre = genre)
 
 @app.route("/movie_prof", methods=["GET"])
+@auto_rollback
 def movie_profile():
 	user = get_current_user()
 	id = request.args.get("id")
@@ -333,6 +361,7 @@ def movie_profile():
 	return render_template("movie_prof.html", movie=movie_info, ratings=ratings, avg_rating = avg_rating, user=user, current_user_rating = current_user_rating)
 
 @app.route("/add_rating", methods=["POST"])
+@auto_rollback
 def add_rating():
 	#get movie from search in movie_prof.html
 	movie_id = int(request.form.get("id"))
@@ -340,8 +369,6 @@ def add_rating():
 	user_id = int(session["user"].id)
 	not_interested = request.form.get("not_interested")
 	rating = dbsession.query(Rating).filter_by(user_id = user_id, movie_id=movie_id).first()
-	# star_rating = request.form.get("star_rating")
-	print request.form
 	
 	if not_interested:
 		# add new 0 rating
@@ -376,6 +403,7 @@ def clear_user_cache():
 	cache.set(session["user"].id, None, timeout=0)
 
 @app.route("/movie_list")
+@auto_rollback
 def movie_list():
 	movie_list = dbsession.query(Media).limit(20).all()
 	return render_template("movie_list.html", movies=movie_list)
@@ -392,6 +420,7 @@ def format_avg_rating(rating):
 	return float("{0:.1f}".format(rating))
 
 @app.route("/pick_genres")
+@auto_rollback
 def pick_genres():
 	# get a list of all genres
 	genres = dbsession.query(Genre).all()
@@ -401,6 +430,7 @@ def pick_genres():
 	return render_template("pick_genres.html", genres=genres, user=user)
 
 @app.route("/post_genres", methods=["POST"])
+@auto_rollback
 def post_genres():
 	# get logged in user and user genre picks from pick_genres.html
 	user_obj = get_current_user()

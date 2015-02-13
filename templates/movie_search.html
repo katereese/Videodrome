@@ -32,7 +32,7 @@
     
     {% for movie in movies2 %}
       {% if movie not in movies %}
-        {% if movie.poster %}<img src="/static/posters/{{ movie.poster }}_95.jpg" align="left" class="smallposter">{% endif %}
+        {% if movie.poster %}<img src="/static/posters/{{ movie.imdbID }}_95.jpg" align="left" class="smallposter">{% endif %}
         <a href="/movie_prof?id={{ movie.id }}"><font size="3">{{ movie.title|e }} ({{ movie.year }})</font></a>
         <br>
         {% if movie.shortPlot %}<span class="plot">{{ movie.shortPlot|e }}</span>{% endif %}

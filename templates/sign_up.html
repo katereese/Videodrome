@@ -3,81 +3,69 @@
 
 <div class="container">
 
-    {% if user %}
-    
-        <h3> Hi {{ user.username }}! Update your profile below.</h4>
-
+  {% if user %}  
+  <h3> Hey {{ user.username }}! Update your profile below.</h3>
     <div class="col-xs-2">
-    <form method='POST' action="/update_prof" id="signup">
-  <!--   <label>email</label>
-        <input type="text" name="email" value="{{ user.email }}"> -->
- <!--    <label>password</label>
-        <input type="password" name="password" placeholder="{{ user.password }}"> -->
-  <!--   <label>username</label>
-        <input type="text" name="username" value="{{ user.username }}"> -->
-    <label>first name</label>
-        <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
-    <label>last name</label>
-        <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
-    <label>age</label>
-        <input type="text" name="age" class="form-control" value="{{ user.age }}">
-    <label>gender</label>
-        <select id="gender" name="gender" class="form-control" value="{{ user.gender }}">
-          {% if user.gender == 0 %}
-          <option value = 0 selected>male</option>
-          <option value = 1>female</option>
-          <option value = 2>unspecified</option>
-          {% elif user.gender == 1 %}
-          <option value = 0 >male</option>
-          <option value = 1 selected>female</option>
-          <option value = 2>unspecified</option>
-          {% elif user.gender == 2 %}
-          <option value = 0>male</option>
-          <option value = 1>female</option>
-          <option value = 2 selected>unspecified</option>
-          {% endif %}
-        </select>
-    <label>zipcode</label>
-        <input type="text" name="zipcode" class="form-control" placeholder="{{ user.zipcode }}">
-        <br>
-    <input type="submit" id="submit_input" name="submit" class="btn btn-primary">
-    </form>
+      <form method='POST' action="/update_prof" id="signup">
+      <label>first name</label>
+          <input type="text" class="form-control" value="{{ user.first_name }}">
+      <label>last name</label>
+          <input type="text" class="form-control" value="{{ user.last_name }}">
+      <label>age</label>
+          <input type="text" class="form-control" value="{{ user.age }}">
+      <label>gender</label>
+          <select id="gender" class="form-control" value="{{ user.gender }}">
+            {% if user.gender == 0 %}
+            <option value = 0 selected>male</option>
+            <option value = 1>female</option>
+            <option value = 2>unspecified</option>
+            {% elif user.gender == 1 %}
+            <option value = 0 >male</option>
+            <option value = 1 selected>female</option>
+            <option value = 2>unspecified</option>
+            {% elif user.gender == 2 %}
+            <option value = 0>male</option>
+            <option value = 1>female</option>
+            <option value = 2 selected>unspecified</option>
+            {% endif %}
+          </select>
+      <label>zipcode</label>
+          <input type="text" class="form-control" placeholder="{{ user.zipcode }}">
+          <br>
+      <input type="submit" id="submit_input" name="submit" class="btn btn-primary lrg">
+      </form>
     </div>
 
-        
-
-    {% else %}
-
-    <h1>Welcome to Videodrome</h1>
-    <h2>Please create a profile to start rating movies!</h2>
-</div>
-
-<div class="col-xs-2">
-<form method='POST' action="/sign_up" id="signup">
-    <label>email</label>
-        <input type="text" name="email" class="form-control" placeholder="email">
-    <label>password</label>
-        <input type="password" name="password" class="form-control" placeholder="password">
-    <label>username</label>
-        <input type="text" name="username" class="form-control" placeholder="username">
-    <label>first_name</label>
-        <input type="text" name="first_name" class="form-control" placeholder="first name">
-    <label>last_name</label>
-        <input type="text" name="last_name" class="form-control" placeholder="last name">
-    <label>age</label>
-        <input type="text" name="age" class="form-control" placeholder="age">
-    <label>gender</label>
-        <select id="gender" name="gender">
-          <option value = 0>male</option>
-          <option value = 1>female</option>
-          <option value = 2>unspecified</option>
-        </select>
-    <label>zipcode</label>
-        <input type="text" name="zipcode" class="form-control" AJAXplaceholder="zipcode">
+  {% else %}
+  <br>
+  <h2>Create a profile to start rating movies!</h2>
+  <br>
+  <div class="col-xs-2">
+    <form method='POST' action="/sign_up" id="signup">
+      <input type="text" name="email" class="form-control" placeholder="email">
         <br>
-    <input type="submit" id="submit_input" name="submit" class="btn btn-primary">
-</form>
+      <input type="password" name="password" class="form-control" placeholder="password">
+        <br>
+      <input type="text" name="username" class="form-control" placeholder="username">
+        <br>
+      <input type="text" name="first_name" class="form-control" placeholder="first name">
+        <br>
+      <input type="text" name="last_name" class="form-control" placeholder="last name">
+        <br>
+      <input type="text" name="age" class="form-control" placeholder="age">
+        <br>
+      <select id="gender" name="gender">
+        <option value = 0>male</option>
+        <option value = 1>female</option>
+        <option value = 2>unspecified</option>
+      </select>
+        <br>
+        <br>
+      <input type="text" name="zipcode" class="form-control" placeholder="zipcode">
+        <br>
+      <input type="submit" id="submit_input" name="Sign Up" class="btn btn-primary btn-lg">
+    </form>
+  </div>
 </div>
-
-    {% endif %}
+  {% endif %}
 {% endblock %}
